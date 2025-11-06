@@ -1,0 +1,266 @@
+---
+title: "Lindeberg-Lévy-Feller Theorem"
+format: html
+---
+
+<div style="
+  display:flex;
+  justify-content:center;
+  align-items:flex-start;
+  gap:12px;
+  flex-wrap:nowrap;
+">
+  <img src="Lindeberg.jpg"
+       style="width:200px;height:300px;object-fit:cover;border-radius:4px;">
+  <img src="levy.jpg"
+       style="width:200px;height:300px;object-fit:cover;border-radius:4px;">
+  <img src="Feller.jpeg"
+       style="width:200px;height:300px;object-fit:cover;border-radius:4px;">
+</div>
+
+## Central Limit Theorem
+
+Probably we are familiar with the Central Limit Theorem (@thm-clt).
+
+::: {.theorem #thm-clt}
+
+## Central Limit Theorem
+
+Let $\{X_n\}_{n \geq  1}$ be a sequence of **independent** and **identical distributed** random variables with finite expectation $\mu$ and and positive, finite variance $\sigma^2$, and set $S_n = X_1 + X_2 + \dots + X_n, n \geq 1$. Then
+
+$$
+\frac{S_n - n\mu}{\sigma\sqrt{n}} \, \overset{d}{\rightarrow} \, \mathcal{N}(0,1), \quad \text{as} \quad n \rightarrow \infty
+$$ {#eq-CLT}
+
+:::
+
+The problem with the theorem is that requires a two strong assumptions **idependency** and **identical distribution**, what if I told you that we can relax one of the conditions?
+
+### Simulating the CLT
+
+```{r, echo=F}
+set.seed(123)
+
+n_muestras <- 1 #Change to 10000 for better results
+
+uniforme <- lapply(1:400, function(n){
+  muestras <- matrix(runif(n*n_muestras), ncol = n_muestras, nrow = n)
+  medias_muestrales <- apply(muestras, MARGIN = 2, mean)
+  medias_muestrales_normalizadas <- (medias_muestrales - 0.5)*sqrt(n)/(sqrt(1/12))
+})
+
+exponencial <- lapply(1:400, function(n){
+  muestras <- matrix(rexp(n*n_muestras), ncol = n_muestras, nrow = n)
+  medias_muestrales <- apply(muestras, MARGIN = 2, mean)
+  medias_muestrales_normalizadas <- (medias_muestrales - 1)*sqrt(n)/(sqrt(1/1))
+})
+
+uniforme <- as.data.frame(uniforme)
+exponencial <- as.data.frame(exponencial)
+
+colnames(uniforme) <- 1:400
+colnames(exponencial) <- 1:400
+
+exponencial$distribucion <- "exponencial"
+uniforme$distribucion <- "uniforme"
+
+data <- rbind(exponencial, uniforme) 
+
+ojs_define(ojs_data = data)
+```
+
+```{ojs}
+//| panel: input
+//| echo: False
+//| width: "100%"
+import { aq, op } from '@uwdata/arquero'
+
+my_data = aq.from(transpose(ojs_data))
+
+viewof n = Inputs.range(
+  [1, 400], 
+  {value: 1, step: 1, label: "Tamaño muestra:"}
+)
+
+viewof distribucion = Inputs.radio(["uniforme", "exponencial"], {value: "uniforme", label: "Distribución"})
+
+normalData = Array.from({ length: 100 }, (_, i) => {
+  let x = -3 + (i / 99) * 6; // Range from -3 to 3
+  return { x, y: Math.exp(-0.5 * x * x) / Math.sqrt(2 * Math.PI) };
+});
+
+
+my_data_2 = my_data.params({ distribucion }).filter(d => d.distribucion === distribucion);
+
+
+point = Array.from({length: 1}, (_, i) => {return {x: 0, y: 0.5}})
+
+Plot.plot({
+    width: 1000,
+    height: 500,
+    y: {grid: true},
+    x: {round: true},    
+    marks: [
+      Plot.rectY(my_data_2, 
+                Plot.binX({y: (a, bin) => {
+                              return a.length / (10000*(bin.x2 - bin.x1));
+                           }}, 
+                          {x: {value: n.toString(), 
+                               inset: 0,
+                               thresholds: d3.range(-3,3 + 0.11, 0.11),
+                               domain: [-3, 3],
+                               }})),
+      Plot.ruleY([0]),
+      Plot.line(normalData, { x: "x", y: "y", stroke: "red" }), //Normal
+      Plot.dot(point, {x: "x", y: "y", r: 0})    
+    ]
+})
+```
+
+## Lindeberg-Lévy-Feller
+
+Let $\{X_n\}_{n \geq 1}$ be a sequence of **independent** random variables with finite variances, and set, for $k \geq 1, \mathbb{E}[X_k]= \mu_k, Var[X_k] = \sigma_k^2$ and for $n \geq 1, S_n = \sum^{n}_{k=1}X_k$ and $V_n^2 = \sum^n_{k=1}\sigma_k^2$
+
+### Conditions
+
+$$
+L_1(n) = \frac{1}{V_n^2}\sum^{n}_{k=1}\mathbb{E}\big[(X_k - \mu_k)^2\mathbf{1}_{\{|X_k - \mu_k| \gt \epsilon V_n\}}\big] \underset{n \rightarrow \infty}{\rightarrow} 0, \quad \forall \epsilon \gt 0
+$$ {#eq-Lind1}
+
+$$
+L_2(n) = \max_{1 \leq k \leq n} \frac{\sigma^2_k}{V_n} \underset{n \rightarrow \infty}{\rightarrow} 0,
+$$ {#eq-Lind2}
+
+### Interpretating the conditions
+
+$L_1$ (Lindeberg's Condition): This condition requires that the proportion of variance represented by values far from the mean is negligible. In other words, what it asks us is that the original distributions of $X_k$ do not have heavy tails.
+
+![Rudimentary visualization of Lindeberg Condition](sketch.png)
+
+$L_2$: To understand condition $L_2$, it is useful to consider when it fails.  The condition is violated when $\sigma_k^2$ represents a non-negligible portion of the total sum of variances. In other words, this occurs when the variance of a single term contributes significantly to the total variance. For example, this could happen when $\sigma^2_k = \sum_{i=1}^{k-1} \sigma_i^2$. So we are asking o each $X_k$ to have a limited variance.
+
+### Theorem
+
+Using the conditions defined above we can state the theorem as follows
+
+::: {.theorem #thm-llf}
+
+## Lindeberg-Lévy-Feller Theorem
+
+<br/>
+
+(i). If $L_1$ (@eq-Lind1) is satisfied , then so is $L_2$ (@eq-Lind2) and
+
+$$
+\frac{1}{V_n}\sum^{n}_{k=1}(X_k - \mu_k) \overset{d}{\rightarrow} \mathcal{N}(0, 1), \quad \text{as} \quad n \rightarrow \infty
+$$ {#eq-LindCLT}
+
+(ii). If @eq-Lind2 and @eq-LindCLT are satisfied, then so is @eq-Lind1
+:::
+
+As we can see, we are not longing requiring that the sequence has a grea to show that has a normal distribution, we are only requiring 
+
+## What do we need to prove it?
+
+The proof of the theorem is extensive, so here I’m going to present a sketch of the proof.
+
+First, for simplicity and without loss of generality, we assume that $\mu_k = 0$ for all $k \geq 1$.  
+So we want to prove that 
+$$
+\frac{S_n}{V_n} \overset{d}{\rightarrow} Z,
+$$
+
+where $Z \sim \mathcal{N}(0,1)$.  
+We are going to do this using **Lévy’s Continuity Theorem** (@thm-levy-cont), which establishes a relationship between convergence in distribution and convergence of characteristic functions.
+
+
+::: {.theorem #thm-levy-cont}
+### Lévy’s Continuity Theorem
+
+Let $\{X_n\}_{n \geq 1}$ be a sequence of random variables. Then
+$$
+\begin{aligned}
+&\qquad \varphi_{X_n}(t) \rightarrow \varphi_X(t) 
+\quad \text{as } n \rightarrow \infty 
+\quad \forall t \in \mathbb{R}, \\
+&\Leftrightarrow \quad 
+X_n \overset{d}{\rightarrow} X 
+\quad \text{as } n \rightarrow \infty.
+\end{aligned}
+$$
+:::
+
+
+By proving that $\varphi_{\frac{S_n}{V_n}}(t) \to \varphi_Z(t)$ we can conclude that  $\frac{S_n}{V_n} \xrightarrow{d} Z$ which is the result we want.  
+
+To show that $\varphi_{\frac{S_n}{V_n}}(t)$ converges pointwise to the characteristic function of the standard normal distribution $\varphi_Z(t)$, we proceed as follows: We approximate $\varphi_{\frac{S_n}{V_n}}(t)$ using its Taylor expansion. This approximation leads to an expression that coincides with $\varphi_Z(t)$, and we then show that the remainder (error) term tends to zero as $n \to \infty$.
+
+::: {.callout-note collapse="true" title="Sketch of the proof"}
+
+$$
+\varphi_{\frac{S_n}{V_n}}(t) = \varphi_{S_n}\!\left( \frac{t}{V_n} \right)
+$$
+
+$$
+\left( S_n = \sum_{k=1}^n X_k, \quad X_k \text{ indep.} \right)
+$$
+
+$$
+= \prod_{k=1}^n \varphi_{X_k}\!\left( \frac{t}{V_n} \right)
+= \left( \varphi = \exp(\log \varphi) \right)
+$$
+
+$$
+= \exp\!\left\{ \sum_{k=1}^n \log \varphi_{X_k}\!\left( \frac{t}{V_n} \right) \right\}
+$$
+
+$$
+\overset{(*)}{\approx} 
+\exp\!\left\{ -\sum_{k=1}^n \left( 1 - \varphi_{X_k}\!\left( \frac{t}{V_n} \right) \right) \right\}
+$$
+
+$$
+\overset{(**)}{\approx} 
+\exp\!\left\{ -\sum_{k=1}^n 
+\left( 1 - \left( 1 + \frac{it}{V_n} \mathbb{E}X_k + \frac{(it)^2}{2V_n^2} \mathbb{E}X_k^2 \right) \right)
+\right\}
+$$
+
+$$
+= \exp\!\left\{ -\sum_{k=1}^n 
+\left( 1 - \left( 1 - \frac{t^2}{2V_n^2}\sigma_k^2 \right) \right)
+\right\}
+$$
+
+$$
+= \exp\!\left\{ -\frac{t^2}{2V_n^2} \sum_{k=1}^n \sigma_k^2 \right\}
+= e^{-\frac{t^2}{2}}.
+$$
+
+Where $(*)$ follows from the Taylor expansion of $\log(1 + x)$ around $x = 0$ and $(**)$ follows from the Taylor expansion of $\varphi_{X_k}(t)$ around $t = 0$. We need to prove that those $\approx$ are $=$ when $n \to \infty$, i.e. the error terms vanish.
+:::
+
+This combination of **Lévy’s Continuity Theorem** and **Taylor series expansion** can be used to prove different theorems, including the **original Central Limit Theorem**.
+
+## Example
+
+
+## Lyapounov’s Condition
+
+Let $\{X_n\}_{n \geq 1}$ a sequence of random variables given as before and assume, in addition, that $\mathbb{E}[|X_k - \mu_k|^{2+\delta}] < \infty$ for all $k$ and some $\delta > 0$. 
+
+$$
+L_y(n, r) = \frac{1}{V_n^{2+\delta}}\sum^{n}_{k=1}\mathbb{E}|X_k - \mu_k|^{2+\delta} \rightarrow 0 \quad \text{as} \quad n \rightarrow \infty
+$$ {#eq-lyapunov}
+
+$$
+\Rightarrow \frac{1}{V_n}\sum^n_{k=1}(X_k - \mu_k) \overset{d}{\rightarrow} \mathcal{N}(0,1) \quad \text{as} \quad n \rightarrow \infty
+$$
+
+For proving this condition we can show that when the Lyapunov's condition (@eq-lyapunov) is satisfied so is the Lindeberg's condition (@eq-Lind1); i.e $L_y \Rightarrow L_1$. 
+
+It's worth noticing that if, $L_1$ holds doesn't implies that $L_y$ holds too. This result is useful since it is easier to prove $L_y$ than to prove $L_1$, so we can start by checking if $L_y$ is true and if it fails, we can try to prove that $L_1$ is true.
+
+## When it fails?
+
+Comentar que cuando la cola es muy pesada no hay forma de que converga
