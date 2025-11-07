@@ -1,6 +1,8 @@
 ---
 title: "Lindeberg-Lévy-Feller Theorem"
 format: html
+bibliography: references.bib
+csl: https://www.zotero.org/styles/apa
 ---
 
 <div style="
@@ -17,6 +19,11 @@ format: html
   <img src="Feller.jpeg"
        style="width:200px;height:300px;object-fit:cover;border-radius:4px;">
 </div>
+
+
+Here, I’m going to present generalizations of the Central Limit Theorem, such as the Lindeberg–Levy–Feller Central Limit Theorem and Lyapunov’s Central Limit Theorem. The applications of the asymptotic behavior of the sample mean of random variables extend across all areas of statistics, being used for inference, hypothesis testing, estimation theory, among many others.
+
+The reference material has been drawn from [@gut2013probability], [@Vaart_1998], and lecture notes by Prof. Marco Scavino for the Probability II course at the Universidad de la República.
 
 ## Central Limit Theorem
 
@@ -79,10 +86,10 @@ my_data = aq.from(transpose(ojs_data))
 
 viewof n = Inputs.range(
   [1, 400], 
-  {value: 1, step: 1, label: "Tamaño muestra:"}
+  {value: 1, step: 1, label: "Sample Size:"}
 )
 
-viewof distribucion = Inputs.radio(["uniforme", "exponencial"], {value: "uniforme", label: "Distribución"})
+viewof distribucion = Inputs.radio(["Uniform", "Exponential"], {value: "uniforme", label: "Distribution"})
 
 normalData = Array.from({ length: 100 }, (_, i) => {
   let x = -3 + (i / 99) * 6; // Range from -3 to 3
@@ -158,7 +165,7 @@ $$ {#eq-LindCLT}
 (ii). If @eq-Lind2 and @eq-LindCLT are satisfied, then so is @eq-Lind1
 :::
 
-As we can see, we are not longing requiring that the sequence has a grea to show that has a normal distribution, we are only requiring 
+As we can see, we no longer require that the sequence be **identically distributed** to obtain a normal distribution. We are only requiring (i) that $L_1$ is satisfied.
 
 ## What do we need to prove it?
 
@@ -195,7 +202,7 @@ By proving that $\varphi_{\frac{S_n}{V_n}}(t) \to \varphi_Z(t)$ we can conclude 
 
 To show that $\varphi_{\frac{S_n}{V_n}}(t)$ converges pointwise to the characteristic function of the standard normal distribution $\varphi_Z(t)$, we proceed as follows: We approximate $\varphi_{\frac{S_n}{V_n}}(t)$ using its Taylor expansion. This approximation leads to an expression that coincides with $\varphi_Z(t)$, and we then show that the remainder (error) term tends to zero as $n \to \infty$.
 
-::: {.callout-note collapse="true" title="Sketch of the proof"}
+::: {.callout-note collapse="false" title="Sketch of the proof"}
 
 $$
 \varphi_{\frac{S_n}{V_n}}(t) = \varphi_{S_n}\!\left( \frac{t}{V_n} \right)
@@ -244,6 +251,13 @@ This combination of **Lévy’s Continuity Theorem** and **Taylor series expansi
 
 ## Example
 
+A cool application of Lindeberg-Feller theorem is in the area of Linear Regression. 
+
+For simplicity we are going to prove it for Simple Linear Regression, but it can be prove. L
+
+$$
+Y_i = \beta_0 + \beta_1X_i + e_i
+$$
 
 ## Lyapounov’s Condition
 
@@ -263,4 +277,15 @@ It's worth noticing that if, $L_1$ holds doesn't implies that $L_y$ holds too. T
 
 ## When it fails?
 
-Comentar que cuando la cola es muy pesada no hay forma de que converga
+The advantage of the Lindeberg–Lévy–Feller theorem is that it relaxes the strong assumption of identical distribution required in the classical Central Limit Theorem, replacing it with the more general Lindeberg condition. It is important to note that independence among random variables is still required. Moreover, as discussed earlier, the Lindeberg condition essentially limits the presence of heavy-tailed distributions. However, as shown by [@Newman2004], we can find heavy-tailed behavior everywhere. In his article, Newman lists several examples, including city populations, individual wealth, citations of scientific papers, website traffic, and others.
+
+As an illustration, consider the empirical example using the dataset [@ache2022citationnetwork], which contains 4,894,081 scientific papers and their corresponding citation counts.
+
+
+
+### References
+
+---
+
+::: {#refs}
+:::
