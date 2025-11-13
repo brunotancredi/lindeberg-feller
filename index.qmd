@@ -1,0 +1,380 @@
+---
+title: "Lindeberg-Lévy-Feller Theorem"
+format: html
+bibliography: references.bib
+csl: https://www.zotero.org/styles/apa
+toc: true
+number-sections: false   # ← NO NUMBERS
+---
+
+<div style="
+  display:flex;
+  justify-content:center;
+  align-items:flex-start;
+  gap:12px;
+  flex-wrap:nowrap;
+">
+  <img src="Lindeberg.jpg"
+       style="width:200px;height:300px;object-fit:cover;border-radius:4px;">
+  <img src="levy.jpg"
+       style="width:200px;height:300px;object-fit:cover;border-radius:4px;">
+  <img src="Feller.jpeg"
+       style="width:200px;height:300px;object-fit:cover;border-radius:4px;">
+</div>
+
+
+Here, I’m going to present generalizations of the Central Limit Theorem, such as the Lindeberg–Levy–Feller Central Limit Theorem and Lyapunov’s Central Limit Theorem. The applications of the asymptotic behavior of the sample mean of random variables extend across all areas of statistics, being used for inference, hypothesis testing, estimation theory, among many others.
+
+The reference material has been drawn from the books Probability: A Graduate Course [@gut2013probability] and Asymptotic Statistics [@Vaart_1998], from the Large Sample Theory lectures by Prof. Jessica Li available on YouTube [@li_large_sample_theory_2020], and from the lecture notes by Prof. Marco Scavino for the Probabilidad II course at the Universidad de la República.
+
+## Central Limit Theorem
+
+Probably we are familiar with the Central Limit Theorem (@thm-clt).
+
+::: {#thm-clt .theorem}
+## Central Limit Theorem
+
+Let $\{X_n\}_{n \geq  1}$ be a sequence of **independent** and **identical distributed** random variables with finite expectation $\mu$ and and positive, finite variance $\sigma^2$, and set $S_n = X_1 + X_2 + \dots + X_n, n \geq 1$. Then
+
+$$
+\frac{S_n - n\mu}{\sigma\sqrt{n}} \, \overset{d}{\rightarrow} \, \mathcal{N}(0,1), \quad \text{as} \quad n \rightarrow \infty
+$$ {#eq-CLT}
+:::
+
+### Simulating the CLT
+
+```{ojs}
+//| panel: input
+//| echo: False
+//| width: "100%"
+import { aq, op } from '@uwdata/arquero'
+
+my_data = aq.loadCSV("https://raw.githubusercontent.com/brunotancredi/lindeberg-feller/refs/heads/main/CLT_simulation_data.csv")
+
+viewof n = Inputs.range(
+  [1, 400], 
+  {value: 1, step: 1, label: "Sample Size:"}
+)
+
+viewof distribution = Inputs.radio(["Uniform", "Exponential"], {value: "Uniform", label: "Distribution"})
+
+normalData = Array.from({ length: 100 }, (_, i) => {
+  let x = -3 + (i / 99) * 6; // Range from -3 to 3
+  return { x, y: Math.exp(-0.5 * x * x) / Math.sqrt(2 * Math.PI) };
+});
+
+
+my_data_2 = my_data.params({ distribution }).filter(d => d.distribution === distribution);
+
+point = Array.from({length: 1}, (_, i) => {return {x: 0, y: 0.5}})
+
+Plot.plot({
+    width: 1000,
+    height: 500,
+    y: {grid: true},
+    x: {round: true},    
+    marks: [
+      Plot.rectY(my_data_2, 
+                Plot.binX({y: (a, bin) => {
+                              return a.length / (5000*(bin.x2 - bin.x1));
+                           }}, 
+                          {x: {value: n.toString(), 
+                               inset: 0,
+                               thresholds: d3.range(-3,3 + 0.11, 0.11),
+                               domain: [-3, 3],
+                               }})),
+      Plot.ruleY([0]),
+      Plot.line(normalData, { x: "x", y: "y", stroke: "red" }), //Normal
+      Plot.dot(point, {x: "x", y: "y", r: 0})    
+    ]
+})
+```
+
+The problem with the theorem is that requires a two strong assumptions **idependency** and **identical distribution**, what if I told you that we can relax one of the conditions?
+
+## Lindeberg-Lévy-Feller
+
+Let $\{X_n\}_{n \geq 1}$ be a sequence of **independent** random variables with finite variances, and set, for $k \geq 1, \mathbb{E}[X_k]= \mu_k, Var[X_k] = \sigma_k^2$ and for $n \geq 1, S_n = \sum^{n}_{k=1}X_k$ and $V_n^2 = \sum^n_{k=1}\sigma_k^2$
+
+### Conditions
+
+$$
+L_1(n) = \frac{1}{V_n^2}\sum^{n}_{k=1}\mathbb{E}\big[(X_k - \mu_k)^2\mathbf{1}_{\{|X_k - \mu_k| \gt \epsilon V_n\}}\big] \underset{n \rightarrow \infty}{\rightarrow} 0, \quad \forall \epsilon \gt 0
+$$ {#eq-Lind1}
+
+$$
+L_2(n) = \max_{1 \leq k \leq n} \frac{\sigma^2_k}{V_n} \underset{n \rightarrow \infty}{\rightarrow} 0,
+$$ {#eq-Lind2}
+
+### Interpretating the conditions
+
+$L_1$ (Lindeberg's Condition): This condition requires that the proportion of variance represented by values far from the mean is negligible. In other words, what it asks us is that the original distributions of $X_k$ do not have heavy tails.
+
+![Rudimentary visualization of Lindeberg Condition](sketch.png){#fig-sketch}
+
+$L_2$: To understand condition $L_2$, it is useful to consider when it fails. The condition is violated when $\sigma_k^2$ represents a non-negligible portion of the total sum of variances. In other words, this occurs when the variance of a single term contributes significantly to the total variance. For example, this could happen when $\sigma^2_k = \sum_{i=1}^{k-1} \sigma_i^2$. So we are asking o each $X_k$ to have a limited variance.
+
+### Theorem
+
+Using the conditions defined above we can state the theorem as follows
+
+::: {#thm-llf .theorem}
+## Lindeberg-Lévy-Feller Theorem
+
+<br/>
+
+(i). If $L_1$ (@eq-Lind1) is satisfied , then so is $L_2$ (@eq-Lind2) and
+
+$$
+\frac{1}{V_n}\sum^{n}_{k=1}(X_k - \mu_k) \overset{d}{\rightarrow} \mathcal{N}(0, 1), \quad \text{as} \quad n \rightarrow \infty
+$$ {#eq-LindCLT}
+
+(ii). If @eq-Lind2 and @eq-LindCLT are satisfied, then so is @eq-Lind1
+:::
+
+As we can see, we no longer require that the sequence be **identically distributed** to obtain a normal distribution. We are only requiring (i) that $L_1$ is satisfied.
+
+## What do we need to prove it?
+
+The proof of the theorem is extensive, so here I’m going to present a sketch of the proof.
+
+First, for simplicity and without loss of generality, we assume that $\mu_k = 0$ for all $k \geq 1$.\
+So we want to prove that 
+
+$$
+\frac{S_n}{V_n} \overset{d}{\rightarrow} Z,
+\quad \text{as} \quad n \rightarrow \infty
+$$
+
+where $Z \sim \mathcal{N}(0,1)$.\
+
+For the proof we are going to use the **Lévy’s Continuity Theorem** (@thm-levy-cont), which establishes a relationship between convergence in distribution and convergence of characteristic functions.
+
+::: {#thm-levy-cont .theorem}
+### Lévy’s Continuity Theorem
+
+Let $\{X_n\}_{n \geq 1}$ be a sequence of random variables. Then 
+
+$$
+\begin{aligned}
+&\qquad \varphi_{X_n}(t) \rightarrow \varphi_X(t) 
+\quad \text{as } n \rightarrow \infty 
+\quad \forall t \in \mathbb{R}, \\
+&\Leftrightarrow \quad 
+X_n \overset{d}{\rightarrow} X 
+\quad \text{as } n \rightarrow \infty.
+\end{aligned}
+$$
+:::
+
+By proving that $\varphi_{\frac{S_n}{V_n}}(t) \to \varphi_Z(t)$ we can conclude that $\frac{S_n}{V_n} \xrightarrow{d} Z$ which is the result we want.
+
+To show that $\varphi_{\frac{S_n}{V_n}}(t)$ converges pointwise to the characteristic function of the standard normal distribution $\varphi_Z(t)$, we proceed as follows: We approximate $\varphi_{\frac{S_n}{V_n}}(t)$ using its Taylor expansion. This approximation leads to an expression that coincides with $\varphi_Z(t)$, and we then show that the remainder (error) term tends to zero as $n \to \infty$.
+
+::: {.callout-note collapse="false" title="Sketch of the proof"}
+
+$$
+\varphi_{\frac{S_n}{V_n}}(t) = \varphi_{S_n}\!\left( \frac{t}{V_n} \right)
+$$
+
+$$
+\left( S_n = \sum_{k=1}^n X_k, \quad X_k \text{ indep.} \right)
+$$
+
+$$
+= \prod_{k=1}^n \varphi_{X_k}\!\left( \frac{t}{V_n} \right)
+= \left( \varphi = \exp(\log \varphi) \right)
+$$
+
+$$
+= \exp\!\left\{ \sum_{k=1}^n \log \varphi_{X_k}\!\left( \frac{t}{V_n} \right) \right\}
+$$
+
+$$
+\overset{(*)}{\approx} 
+\exp\!\left\{ -\sum_{k=1}^n \left( 1 - \varphi_{X_k}\!\left( \frac{t}{V_n} \right) \right) \right\}
+$$
+
+$$
+\overset{(**)}{\approx} 
+\exp\!\left\{ -\sum_{k=1}^n 
+\left( 1 - \left( 1 + \frac{it}{V_n} \mathbb{E}X_k + \frac{(it)^2}{2V_n^2} \mathbb{E}X_k^2 \right) \right)
+\right\}
+$$
+
+$$
+= \exp\!\left\{ -\sum_{k=1}^n 
+\left( 1 - \left( 1 - \frac{t^2}{2V_n^2}\sigma_k^2 \right) \right)
+\right\}
+$$
+
+$$
+= \exp\!\left\{ -\frac{t^2}{2V_n^2} \sum_{k=1}^n \sigma_k^2 \right\}
+= e^{-\frac{t^2}{2}}.
+$$
+
+Where $(*)$ follows from the Taylor expansion of $\log(1 + x)$ around $x = 0$ and $(**)$ follows from the Taylor expansion of $\varphi_{X_k}(t)$ around $t = 0$. We need to prove that those $\approx$ are $=$ when $n \to \infty$, i.e. the error terms vanish.
+:::
+
+This combination of **Lévy’s Continuity Theorem** and **Taylor series expansion** can be used to prove different theorems, including the **original Central Limit Theorem**.
+
+## Example
+
+A cool application of Lindeberg-Feller theorem is in the area of Linear Regression. For those that are in a Regression course, or already take one, you will have seen that the Ordinary Least Squares (OLS) estimator follows a normal distribution when the errors are normal. But ... ***what if the errors are not normal?*** 
+Well, under certain assumptions we can use the Lindeberg-Lévy-Feller theorem to show that the OLS estimator assympotically follows a normal distribution. For simplicity we are going to prove it for the estimator of the slope coefficient in a simple linear regression model (SLR).
+
+$$
+y_i = \beta_0 + \beta_1x_i + e_i, \quad e_i \quad i.i.d \quad \forall i = 1, \dots, n
+$$ {#eq-lin-reg}
+
+A simple linear regression model is given by @eq-lin-reg, where $\mathbb{E}[e_i] = 0$ and $\text{Var}(e_i) = \sigma^2$. We have that the estimator for the slope in SLR is given by 
+
+$$
+\hat{\beta}_{1n} = \frac{\sum_{i=1}^n(y_i - \bar{Y}_ n)(x_i - \bar{X}_n)}{\sum_{i=1}^n(x_i - \bar{X}_n)^2}
+$${#eq-ols-beta1-def}
+
+You can notice that in @eq-ols-beta1-def we have a subindex $n$, this is because $\hat{\beta}_{1n}$ (and the means $\bar{X}_n$, $\bar{Y}_n$ too) changes with the sample size, and we want to study its asymptotic behavior when $n \to \infty$.
+
+After some math we can rewrite $\hat{\beta}_{1n}$ as a linear combination of the erros
+
+$$
+\hat{\beta}_{1n} = \beta_1 + \frac{\sum_{i=1}^n(x_i - \bar{X}_n)e_i}{\sum_{i=1}^n(x_i - \bar{X}_n)^2}
+$${#eq-ols-combination}
+
+We can define the sequence of random variables 
+
+$$
+W_{ni} := (x_i - \bar{X}_n)e_i
+$$
+
+And rewrite @eq-ols-combination as
+
+$$
+\hat{\beta}_{1n} = \beta_1 + \frac{\sum_{i=1}^nW_{ni}}{\sum_{i=1}^n(x_i - \bar{X}_n)^2}
+$$
+
+We have that the expected value of $W_{ni}$ is zero and its variance is given by $\sigma^2(x_i - \bar{X})^2$, since the only random part is $e_i$ and they are i.i.d, with mean zero and variance $\sigma^2$. 
+
+Our goal is to proof that
+$$
+\frac{\sum_{i=1}^{n}W_{ni}}{\sigma\sqrt(\sum_{i=1}^{n}(x_i - \bar{X}_n)^2)} \overset{d}{\rightarrow} \mathcal{N}(0,1), \quad \text{as} \quad n \rightarrow \infty
+$${#eq-ols-convergence}
+
+Note that proving these we are proving $\hat{\beta}_{1n} \overset{d}{\rightarrow} \mathcal{N}(\beta_1, \frac{\sigma^2}{\sum_{i=1}^n(x_i - \bar{X_i})^2})$ since
+
+\begin{align*}
+\hat{\beta}_{1n} &= \beta_1 + \frac{\sum_{i=1}^nW_{ni}}{\sum_{i=1}^n(x_i - \bar{X}_n)^2} \\
+&= \beta_1 + \frac{\sigma}{\sqrt{\sum_{i=1}^n(x_i - \bar{X}_n)^2}} \cdot \frac{\sum_{i=1}^{n}W_{ni}}{\sigma\sqrt(\sum_{i=1}^{n}(x_i - \bar{X})^2)}\\
+&\overset{d}{\rightarrow} \beta_1 + \frac{\sigma}{\sqrt{\sum_{i=1}^n(x_i - \bar{X}_n)^2}} \cdot Z = \mathcal{N}\left(\beta_1, \frac{\sigma^2}{\sum_{i=1}^n(x_i - \bar{X_i})^2}\right)
+\end{align*}
+
+Thanks to Lindeberg-Lévy-Feller theorem @thm-llf, we only need to prove that $L_1$ (@eq-Lind1) holds for the sequence $\{W_{ni}\}_{i=1}^{n}$ to conclude that @eq-ols-convergence holds. 
+
+
+In [ADD PROOF], we conclude that we can change the identical distribution requirement for 
+
+$$
+\max_{1 \leq j \leq n} \frac{(x_j - \bar{X}_n)^2}{\sum_{i=1}^{n}(x_i - \bar{X}_n)^2} \underset{n \rightarrow \infty}{\rightarrow} 0
+$$
+
+That is a much relaxed requirement.
+
+### Example Simulation
+
+To simulate this experiment, we generate data from the linear model  $y = 1 + 2x + \epsilon$, where the errors $\epsilon$ follow an exponential distribution with variance $\sigma^{2} = 64$. Using 
+Monte Carlo replication, we examine the sampling distribution of the  OLS estimator for different sample sizes. As shown in the widget,  increasing the sample size causes the sampling distribution to approach a normal distribution centered around the true value $\beta_{1} = 2$.
+
+```{ojs}
+//| panel: input
+//| echo: False
+//| width: "100%"
+
+// Load data generated by OLS_simulation
+data = aq.loadCSV("https://raw.githubusercontent.com/brunotancredi/lindeberg-feller/refs/heads/main/ols_montecarlo_simulation.csv")
+
+viewof z = Inputs.range(
+  [2, 500], 
+  {value: 2, step: 1, label: "Sample Size:"}
+)
+
+ols_data = data.filter(aq.escape(d => d.n === z))
+
+binThresholds = {
+  const nbins = 30; // <- your desired number of bins
+  const [xmin, xmax] = d3.extent(ols_data, d => d.ols_estimator);
+  const step = (xmax - xmin) / nbins;
+  // nbins bins = nbins+1 edges
+  return d3.range(xmin, xmax + step * 1.0001, step);
+}
+
+length = ols_data.numRows()
+
+Plot.plot({
+  width: 1000,
+  height: 500,
+  y: {grid: true},
+  x: {round: true},
+  marks: [
+    Plot.rectY(
+      ols_data,
+      Plot.binX(
+        { y: "proportion" },
+        {
+          x: "ols_estimator",
+          thresholds: binThresholds,   // fixed # of bins
+          inset: 0
+        }
+      )
+    ),
+    Plot.ruleY([0])
+  ]
+})
+```
+
+## Lyapounov’s Condition
+
+Sometimes proving the Lindeberg's condition (@eq-Lind1) can be difficult, so we can use an alternative condition known as Lyapounov's condition. So we can start by checking if $L_y$ is true and if it fails, we can try to prove that $L_1$ is true.
+
+Let $\{X_n\}_{n \geq 1}$ a sequence of random variables given as before and assume, in addition, that $\mathbb{E}[|X_k - \mu_k|^{2+\delta}] < \infty$ for all $k$ and some $\delta > 0$. The advantage of 
+
+$$
+L_y(n, r) = \frac{1}{V_n^{2+\delta}}\sum^{n}_{k=1}\mathbb{E}|X_k - \mu_k|^{2+\delta} \rightarrow 0 \quad \text{as} \quad n \rightarrow \infty
+$$ {#eq-lyapunov}
+
+$$
+\Rightarrow \frac{1}{V_n}\sum^n_{k=1}(X_k - \mu_k) \overset{d}{\rightarrow} \mathcal{N}(0,1) \quad \text{as} \quad n \rightarrow \infty
+$$
+
+For proving this condition we can show that when the Lyapunov's condition (@eq-lyapunov) is satisfied so is the Lindeberg's condition (@eq-Lind1); i.e $L_y \Rightarrow L_1$.
+
+It's worth noticing that if, $L_1$ holds doesn't implies that $L_y$ holds too. 
+
+## Comments: When it fails?
+
+The advantage of the Lindeberg–Lévy–Feller theorem is that it relaxes the strong assumption of identical distribution required in the classical Central Limit Theorem, replacing it with the more general Lindeberg condition. It is important to note that independence among random variables is still required. Moreover, as discussed earlier, the Lindeberg condition essentially limits the presence of heavy-tailed distributions. However, as shown by [@Newman2004], we can find heavy-tailed behavior everywhere. In his article, Newman lists several examples, including city populations, individual wealth, citations of scientific papers, website traffic, and others.
+
+As an illustration, consider the empirical example using the dataset [@ache2022citationnetwork], which contains 4,894,081 scientific papers and their corresponding citation counts.
+
+As we can see in @fig-distribution-means, the sampling distribution of the sample means doesn’t seem to follow a normal distribution; a clear heavy tail is present even when we increase the sample size. The probability of seeing an observation farther than 5 standard deviations under a normal distribution is …, and farther than 10 is …, and we have a lot of them!
+
+So we have two possibilities: either I ran the experiment infinitely many times, changing the seed until I got this crazy result, or the convergence to the normal distribution is simply not happening. I would ask you to believe my word that I didn’t mislead the experiment.
+
+![Centered sampling distributions of the sample means. Observations exceeding 5 standard deviations are highlighted in green, while those exceeding 10 standard deviations are highlighted in red.](sampling_distribution_means.png){#fig-distribution-means}
+
+In @fig-lindeberg_convergence, we can see how $L_1$ is not satisficied, since instead of converging to 0 it bounces, even with $n=50000$.
+
+![Evolution of the empirical Lindeberg condition for an arbitrary ε = 0.2](lindeberg_convergence.gif){#fig-lindeberg_convergence}
+
+As a final comment, here we are working with citations in papers that have a certain limitation (the most cited papers here have around 50,000 citations). Now think about views of a webpage: how many views does [www.youtube.com](www.youtube.com) have compared to this humble page that talks about the Lindeberg–Lévy–Feller theorem? The variance there will be much higher, and this is just another example. So be careful, **a heavy-tailed distribution might be waiting for you around the corner**.
+
+## Comic Relief
+
+> The Swedish mathematician Harald Cramér met Lindeberg in 1922. He later recalled this story about Lindeberg and the beautiful farm he owned. “When he was reproached for not being sufficiently active in his scientific work, he said *‘Well, I am really a farmer.’* And if somebody happened to say that his farm was not properly cultivated, his answer was *‘Of course my real job is to be a professor.’* …” [@lindeberg_wikipedia]
+
+
+### References
+
+------------------------------------------------------------------------
+
+::: {#refs}
+:::

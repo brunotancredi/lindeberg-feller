@@ -1,0 +1,11 @@
+project:
+  type: website
+  output-dir: docs
+
+website:
+  title: "Lindeberg-Lévy-Feller Theorem"
+  sidebar:
+    style: "floating"
+    contents:
+      - index.qmd
+
