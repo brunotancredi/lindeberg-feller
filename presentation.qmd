@@ -268,20 +268,6 @@ Note that proving these we are proving $\hat{\beta}_{1n} \overset{d}{\rightarrow
 
 Thanks to Lindeberg-Lévy-Feller theorem @thm-llf, we only need to prove that $L_1$ (@eq-Lind1) holds for the sequence $\{W_{ni}\}_{i=1}^{n}$ to conclude that @eq-ols-convergence holds. 
 
-
-In [ADD PROOF], we conclude that we can change the identical distribution requirement for 
-
-$$
-\max_{1 \leq j \leq n} \frac{(x_j - \bar{X}_n)^2}{\sum_{i=1}^{n}(x_i - \bar{X}_n)^2} \underset{n \rightarrow \infty}{\rightarrow} 0
-$$
-
-That is a much relaxed requirement.
-
-### Example Simulation
-
-To simulate this experiment, we generate data from the linear model  $y = 1 + 2x + \epsilon$, where the errors $\epsilon$ follow an exponential distribution with variance $\sigma^{2} = 64$. Using 
-Monte Carlo replication, we examine the sampling distribution of the  OLS estimator for different sample sizes. As shown in the widget,  increasing the sample size causes the sampling distribution to approach a normal distribution centered around the true value $\beta_{1} = 2$.
-
 ```{ojs}
 //| panel: input
 //| echo: False
@@ -328,6 +314,173 @@ Plot.plot({
   ]
 })
 ```
+
+::: {.callout-note collapse="false" title="Example Proof" #nte-proof}
+The Lindeberg condition is given by
+
+$$
+\frac{1}{V_n}\sum_{i=1}^n 
+\mathbb{E}\!\left[ W_{ni}^2 \mathbf{1}\{ |W_{ni}| > \varepsilon V_n \} \right].
+$$
+
+Replacing by the definition of $W_{ni}$,
+
+$$
+\frac{1}{V_n} \sum_{i=1}^n 
+\mathbb{E}\!\left[ ((X_i - \bar X_n)e_i)^2 
+     \mathbf{1}\{ |(X_i - \bar X_n)e_i| \ge \varepsilon V_n \} \right].
+$$
+
+This can be written as
+
+$$
+\frac{1}{V_n} \sum_{i=1}^n (X_i - \bar X_n)^2 
+     \mathbb{E}\!\left[ e_i^2 \mathbf{1}\left\{ |e_i| \ge 
+     \frac{\varepsilon V_n}{|X_i - \bar X_n|} \right\} \right].
+$$
+
+It is useful to remove the dependence on $i$ inside the expectation.  
+Define
+
+$$
+M := \max_{j=1,\dots,n} |X_j - \bar X_n|.
+$$
+
+By definition, $M \ge |X_i - \bar X_n|$, and therefore
+
+$$
+\frac{\varepsilon V_n}{M} \le 
+\frac{\varepsilon V_n}{|X_i - \bar X_n|}.
+$$
+
+Thus,
+
+$$
+\mathbf{1}\!\left\{ |e_i| \ge 
+\frac{\varepsilon V_n}{|X_i - \bar X_n|} \right\}
+\le 
+\mathbf{1}\!\left\{ |e_i| \ge \frac{\varepsilon V_n}{M} \right\}.
+$$
+
+**Returning to the condition**
+
+Using the previous bound,
+
+$$
+\le \frac{1}{V_n} \sum_{i=1}^n (X_i - \bar X_n)^2 
+\mathbb{E}\!\left[
+e_i^2 \mathbf{1}\!\left\{ |e_i| \ge \frac{\varepsilon V_n}{M} \right\}
+\right].
+$$
+
+Since the $e_i$ are independent and identically distributed,
+
+$$
+= \frac{1}{V_n} \left[ \sum_{i=1}^n (X_i - \bar X_n)^2 \right]
+\mathbb{E}\!\left[
+e_1^2 \mathbf{1}\!\left\{ |e_1| \ge \frac{\varepsilon V_n}{M} \right\}
+\right].
+$$
+
+Using the definition of $V_n = \sigma^2 \sum_{i=1}^n (X_i - \bar X_n)^2$,
+
+$$
+= \frac{1}{\sigma^2} 
+\mathbb{E}\!\left[
+e_1^2 \mathbf{1}\!\left\{ |e_1| \ge 
+\varepsilon \frac{\sqrt{\sum (X_i - \bar X_n)^2}}{M}
+\right\} \right].
+$$
+
+Thus,
+
+$$
+= \frac{1}{\sigma^2}
+\mathbb{E}\!\left[
+e_1^2 \mathbf{1}\!\left\{ |e_1| \ge 
+\varepsilon \sqrt{\frac{\sum (X_i - \bar X_n)^2}{M^2}}
+\right\}
+\right].
+$$
+
+If we impose the condition
+
+$$
+\frac{M^2}{\sum_{i=1}^n (X_i - \bar X_n)^2}
+= 
+\frac{\max_{j}|X_j - \bar X_n|^2}
+{\sum_{i=1}^n (X_i - \bar X_n)^2}
+\longrightarrow 0 \qquad (n \to \infty),
+$$
+
+then
+
+$$
+e_1^2 \mathbf{1}\!\left\{
+|e_1| \ge 
+\varepsilon \sqrt{\frac{\sum (X_i - \bar X_n)^2}{M^2}}
+\right\}
+\longrightarrow 0
+\quad \text{a.s.}
+$$
+
+**Using the Lebesgue Dominated Convergence Theorem**
+
+Suppose $|X_n| \le Y$ for all $n$, with $\mathbb{E}[Y] < \infty$, and  
+$X_n \to X$ almost surely as $n \to \infty$. Then
+
+$$
+\mathbb{E}[X_n] \to \mathbb{E}[X].
+$$
+
+Applying this to our setting, we have
+
+$$
+e_1^2\,\mathbf{1}\!\left\{
+|e_1| \ge 
+\varepsilon \sqrt{\frac{\sum (X_i - \bar X_n)^2}{M^2}}
+\right\}
+\longrightarrow 0,
+$$
+
+and uniformly,
+
+$$
+0 \le 
+e_1^2\,\mathbf{1}\!\left\{
+|e_1| \ge 
+\varepsilon \sqrt{\frac{\sum (X_i - \bar X_n)^2}{M^2}}
+\right\}
+\le e_1^2.
+$$
+
+Since $\mathbb{E}[e_1^2] = \sigma^2 < \infty$, by the Dominated Convergence Theorem,
+
+$$
+\mathbb{E}\!\left[
+e_1^2\,\mathbf{1}\!\left\{
+|e_1| \ge 
+\varepsilon \sqrt{\frac{\sum (X_i - \bar X_n)^2}{M^2}}
+\right\}
+\right]
+\longrightarrow 0 \qquad (n \to \infty).
+$$
+:::
+
+In @nte-proof, we conclude that we can change the identical distribution requirement for 
+
+$$
+\max_{1 \leq j \leq n} \frac{(x_j - \bar{X}_n)^2}{\sum_{i=1}^{n}(x_i - \bar{X}_n)^2} \underset{n \rightarrow \infty}{\rightarrow} 0
+$$
+
+That is a much relaxed requirement.
+
+### Example Simulation
+
+To simulate this experiment, we generate data from the linear model  $y = 1 + 2x + \epsilon$, where the errors $\epsilon$ follow an exponential distribution with variance $\sigma^{2} = 64$. Using 
+Monte Carlo with 5000 replications, we examine the sampling distribution of the  OLS estimator for different sample sizes. As shown in the widget,  increasing the sample size causes the sampling distribution to approach a normal distribution centered around the true value $\beta_{1} = 2$.
+
+
 
 ## Lyapounov’s Condition
 
