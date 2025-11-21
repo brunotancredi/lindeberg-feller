@@ -354,8 +354,8 @@ Note
 <p>The issue with the theorem is that it relies on two strong assumptions: <strong>independence</strong> and <strong>identical distribution</strong>. But what if I told you we could relax one of them?</p>
 </section>
 </section>
-<section id="lindeberg-lévy-feller" class="level2">
-<h2 class="anchored" data-anchor-id="lindeberg-lévy-feller">Lindeberg-Lévy-Feller</h2>
+<section id="lindeberg-lévy-feller-theorem" class="level2">
+<h2 class="anchored" data-anchor-id="lindeberg-lévy-feller-theorem">Lindeberg-Lévy-Feller Theorem</h2>
 <p>Let <span class="math inline">\(\{X_n\}_{n \geq 1}\)</span> be a sequence of <strong>independent</strong> random variables with finite variances, and set, for <span class="math inline">\(k \geq 1, \mathbb{E}[X_k]= \mu_k, Var[X_k] = \sigma_k^2\)</span> and for <span class="math inline">\(n \geq 1, S_n = \sum^{n}_{k=1}X_k\)</span> and <span class="math inline">\(V_n^2 = \sum^n_{k=1}\sigma_k^2\)</span></p>
 <section id="conditions" class="level3">
 <h3 class="anchored" data-anchor-id="conditions">Conditions</h3>
@@ -392,9 +392,9 @@ L_2(n) = \max_{1 \leq k \leq n} \frac{\sigma^2_k}{V_n^2} \underset{n \rightarrow
 <p><span id="eq-LindCLT"><span class="math display">\[
 \frac{1}{V_n}\sum^{n}_{k=1}(X_k - \mu_k) \overset{d}{\rightarrow} \mathcal{N}(0, 1), \quad \text{as} \quad n \rightarrow \infty
 \tag{4}\]</span></span></p>
-<p>(ii). If <a href="#eq-Lind2" class="quarto-xref">Equation&nbsp;3</a> and <a href="#eq-LindCLT" class="quarto-xref">Equation&nbsp;4</a> are satisfied, then so is <a href="#eq-Lind1" class="quarto-xref">Equation&nbsp;2</a></p>
+<p>(ii). If <span class="math inline">\(L_2\)</span> (<a href="#eq-Lind2" class="quarto-xref">Equation&nbsp;3</a>) and the convergence in distribution to a standard normal (<a href="#eq-LindCLT" class="quarto-xref">Equation&nbsp;4</a>) both hold, then <span class="math inline">\(L_1\)</span> <a href="#eq-Lind1" class="quarto-xref">Equation&nbsp;2</a> holds as well.</p>
 </div>
-<p>As we can see, we no longer require that the sequence be <strong>identically distributed</strong> to obtain a normal distribution. We are only requiring (i) that <span class="math inline">\(L_1\)</span> is satisfied.</p>
+<p>As we can see, we no longer require that the sequence be <strong>identically distributed</strong> to obtain a normal distribution. We are only requiring that <span class="math inline">\(L_1\)</span> is satisfied (i).</p>
 </section>
 </section>
 <section id="what-do-we-need-to-prove-it" class="level2">
@@ -649,45 +649,45 @@ e_1^2\,\mathbf{1}\!\left\{
 <h3 class="anchored" data-anchor-id="example-simulation">Example Simulation</h3>
 <p>To simulate this experiment, we generate data from the linear model <span class="math inline">\(y = 1 + 2x + \epsilon\)</span>, where the errors <span class="math inline">\(\epsilon\)</span> follow an exponential distribution with variance <span class="math inline">\(\sigma^{2} = 64\)</span>. Using Monte Carlo with 5000 replications, we examine the sampling distribution of the OLS estimator for different sample sizes. As shown in the widget, increasing the sample size causes the sampling distribution to approach a normal distribution centered around the true value <span class="math inline">\(\beta_{1} = 2\)</span>.</p>
 <div class="cell panel-input card bg-light p-2" width="100%">
-<div class="sourceCode cell-code hidden" id="cb2" data-startfrom="497" data-source-offset="-42"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 496;"><span id="cb2-497"><a href="#cb2-497" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> aq<span class="op">.</span><span class="fu">loadCSV</span>(<span class="st">"https://raw.githubusercontent.com/brunotancredi/lindeberg-feller/refs/heads/main/ols_montecarlo_simulation.csv"</span>)</span>
-<span id="cb2-498"><a href="#cb2-498" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-499"><a href="#cb2-499" aria-hidden="true" tabindex="-1"></a>viewof z <span class="op">=</span> Inputs<span class="op">.</span><span class="fu">range</span>(</span>
-<span id="cb2-500"><a href="#cb2-500" aria-hidden="true" tabindex="-1"></a>  [<span class="dv">2</span><span class="op">,</span> <span class="dv">500</span>]<span class="op">,</span> </span>
-<span id="cb2-501"><a href="#cb2-501" aria-hidden="true" tabindex="-1"></a>  {<span class="dt">value</span><span class="op">:</span> <span class="dv">2</span><span class="op">,</span> <span class="dt">step</span><span class="op">:</span> <span class="dv">1</span><span class="op">,</span> <span class="dt">label</span><span class="op">:</span> <span class="st">"Sample Size:"</span>}</span>
-<span id="cb2-502"><a href="#cb2-502" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb2-503"><a href="#cb2-503" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-504"><a href="#cb2-504" aria-hidden="true" tabindex="-1"></a>ols_data <span class="op">=</span> data<span class="op">.</span><span class="fu">filter</span>(aq<span class="op">.</span><span class="fu">escape</span>(d <span class="kw">=&gt;</span> d<span class="op">.</span><span class="at">n</span> <span class="op">===</span> z))</span>
-<span id="cb2-505"><a href="#cb2-505" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-506"><a href="#cb2-506" aria-hidden="true" tabindex="-1"></a>binThresholds <span class="op">=</span> {</span>
-<span id="cb2-507"><a href="#cb2-507" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> nbins <span class="op">=</span> <span class="dv">30</span><span class="op">;</span> <span class="co">// &lt;- your desired number of bins</span></span>
-<span id="cb2-508"><a href="#cb2-508" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> [xmin<span class="op">,</span> xmax] <span class="op">=</span> d3<span class="op">.</span><span class="fu">extent</span>(ols_data<span class="op">,</span> d <span class="kw">=&gt;</span> d<span class="op">.</span><span class="at">ols_estimator</span>)<span class="op">;</span></span>
-<span id="cb2-509"><a href="#cb2-509" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> step <span class="op">=</span> (xmax <span class="op">-</span> xmin) <span class="op">/</span> nbins<span class="op">;</span></span>
-<span id="cb2-510"><a href="#cb2-510" aria-hidden="true" tabindex="-1"></a>  <span class="co">// nbins bins = nbins+1 edges</span></span>
-<span id="cb2-511"><a href="#cb2-511" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> d3<span class="op">.</span><span class="fu">range</span>(xmin<span class="op">,</span> xmax <span class="op">+</span> step <span class="op">*</span> <span class="fl">1.0001</span><span class="op">,</span> step)<span class="op">;</span></span>
-<span id="cb2-512"><a href="#cb2-512" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb2-513"><a href="#cb2-513" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-514"><a href="#cb2-514" aria-hidden="true" tabindex="-1"></a>length <span class="op">=</span> ols_data<span class="op">.</span><span class="fu">numRows</span>()</span>
-<span id="cb2-515"><a href="#cb2-515" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-516"><a href="#cb2-516" aria-hidden="true" tabindex="-1"></a>Plot<span class="op">.</span><span class="fu">plot</span>({</span>
-<span id="cb2-517"><a href="#cb2-517" aria-hidden="true" tabindex="-1"></a>  <span class="dt">width</span><span class="op">:</span> <span class="dv">1000</span><span class="op">,</span></span>
-<span id="cb2-518"><a href="#cb2-518" aria-hidden="true" tabindex="-1"></a>  <span class="dt">height</span><span class="op">:</span> <span class="dv">500</span><span class="op">,</span></span>
-<span id="cb2-519"><a href="#cb2-519" aria-hidden="true" tabindex="-1"></a>  <span class="dt">y</span><span class="op">:</span> {<span class="dt">grid</span><span class="op">:</span> <span class="kw">true</span>}<span class="op">,</span></span>
-<span id="cb2-520"><a href="#cb2-520" aria-hidden="true" tabindex="-1"></a>  <span class="dt">x</span><span class="op">:</span> {<span class="dt">round</span><span class="op">:</span> <span class="kw">true</span>}<span class="op">,</span></span>
-<span id="cb2-521"><a href="#cb2-521" aria-hidden="true" tabindex="-1"></a>  <span class="dt">marks</span><span class="op">:</span> [</span>
-<span id="cb2-522"><a href="#cb2-522" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">rectY</span>(</span>
-<span id="cb2-523"><a href="#cb2-523" aria-hidden="true" tabindex="-1"></a>      ols_data<span class="op">,</span></span>
-<span id="cb2-524"><a href="#cb2-524" aria-hidden="true" tabindex="-1"></a>      Plot<span class="op">.</span><span class="fu">binX</span>(</span>
-<span id="cb2-525"><a href="#cb2-525" aria-hidden="true" tabindex="-1"></a>        { <span class="dt">y</span><span class="op">:</span> <span class="st">"proportion"</span> }<span class="op">,</span></span>
-<span id="cb2-526"><a href="#cb2-526" aria-hidden="true" tabindex="-1"></a>        {</span>
-<span id="cb2-527"><a href="#cb2-527" aria-hidden="true" tabindex="-1"></a>          <span class="dt">x</span><span class="op">:</span> <span class="st">"ols_estimator"</span><span class="op">,</span></span>
-<span id="cb2-528"><a href="#cb2-528" aria-hidden="true" tabindex="-1"></a>          <span class="dt">thresholds</span><span class="op">:</span> binThresholds<span class="op">,</span>   <span class="co">// fixed # of bins</span></span>
-<span id="cb2-529"><a href="#cb2-529" aria-hidden="true" tabindex="-1"></a>          <span class="dt">inset</span><span class="op">:</span> <span class="dv">0</span></span>
-<span id="cb2-530"><a href="#cb2-530" aria-hidden="true" tabindex="-1"></a>        }</span>
-<span id="cb2-531"><a href="#cb2-531" aria-hidden="true" tabindex="-1"></a>      )</span>
-<span id="cb2-532"><a href="#cb2-532" aria-hidden="true" tabindex="-1"></a>    )<span class="op">,</span></span>
-<span id="cb2-533"><a href="#cb2-533" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">ruleY</span>([<span class="dv">0</span>])</span>
-<span id="cb2-534"><a href="#cb2-534" aria-hidden="true" tabindex="-1"></a>  ]</span>
-<span id="cb2-535"><a href="#cb2-535" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code hidden" id="cb2" data-startfrom="498" data-source-offset="-42"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 497;"><span id="cb2-498"><a href="#cb2-498" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> aq<span class="op">.</span><span class="fu">loadCSV</span>(<span class="st">"https://raw.githubusercontent.com/brunotancredi/lindeberg-feller/refs/heads/main/ols_montecarlo_simulation.csv"</span>)</span>
+<span id="cb2-499"><a href="#cb2-499" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-500"><a href="#cb2-500" aria-hidden="true" tabindex="-1"></a>viewof z <span class="op">=</span> Inputs<span class="op">.</span><span class="fu">range</span>(</span>
+<span id="cb2-501"><a href="#cb2-501" aria-hidden="true" tabindex="-1"></a>  [<span class="dv">2</span><span class="op">,</span> <span class="dv">500</span>]<span class="op">,</span> </span>
+<span id="cb2-502"><a href="#cb2-502" aria-hidden="true" tabindex="-1"></a>  {<span class="dt">value</span><span class="op">:</span> <span class="dv">2</span><span class="op">,</span> <span class="dt">step</span><span class="op">:</span> <span class="dv">1</span><span class="op">,</span> <span class="dt">label</span><span class="op">:</span> <span class="st">"Sample Size:"</span>}</span>
+<span id="cb2-503"><a href="#cb2-503" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-504"><a href="#cb2-504" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-505"><a href="#cb2-505" aria-hidden="true" tabindex="-1"></a>ols_data <span class="op">=</span> data<span class="op">.</span><span class="fu">filter</span>(aq<span class="op">.</span><span class="fu">escape</span>(d <span class="kw">=&gt;</span> d<span class="op">.</span><span class="at">n</span> <span class="op">===</span> z))</span>
+<span id="cb2-506"><a href="#cb2-506" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-507"><a href="#cb2-507" aria-hidden="true" tabindex="-1"></a>binThresholds <span class="op">=</span> {</span>
+<span id="cb2-508"><a href="#cb2-508" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> nbins <span class="op">=</span> <span class="dv">30</span><span class="op">;</span> <span class="co">// &lt;- your desired number of bins</span></span>
+<span id="cb2-509"><a href="#cb2-509" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> [xmin<span class="op">,</span> xmax] <span class="op">=</span> d3<span class="op">.</span><span class="fu">extent</span>(ols_data<span class="op">,</span> d <span class="kw">=&gt;</span> d<span class="op">.</span><span class="at">ols_estimator</span>)<span class="op">;</span></span>
+<span id="cb2-510"><a href="#cb2-510" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> step <span class="op">=</span> (xmax <span class="op">-</span> xmin) <span class="op">/</span> nbins<span class="op">;</span></span>
+<span id="cb2-511"><a href="#cb2-511" aria-hidden="true" tabindex="-1"></a>  <span class="co">// nbins bins = nbins+1 edges</span></span>
+<span id="cb2-512"><a href="#cb2-512" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> d3<span class="op">.</span><span class="fu">range</span>(xmin<span class="op">,</span> xmax <span class="op">+</span> step <span class="op">*</span> <span class="fl">1.0001</span><span class="op">,</span> step)<span class="op">;</span></span>
+<span id="cb2-513"><a href="#cb2-513" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-514"><a href="#cb2-514" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-515"><a href="#cb2-515" aria-hidden="true" tabindex="-1"></a>length <span class="op">=</span> ols_data<span class="op">.</span><span class="fu">numRows</span>()</span>
+<span id="cb2-516"><a href="#cb2-516" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-517"><a href="#cb2-517" aria-hidden="true" tabindex="-1"></a>Plot<span class="op">.</span><span class="fu">plot</span>({</span>
+<span id="cb2-518"><a href="#cb2-518" aria-hidden="true" tabindex="-1"></a>  <span class="dt">width</span><span class="op">:</span> <span class="dv">1000</span><span class="op">,</span></span>
+<span id="cb2-519"><a href="#cb2-519" aria-hidden="true" tabindex="-1"></a>  <span class="dt">height</span><span class="op">:</span> <span class="dv">500</span><span class="op">,</span></span>
+<span id="cb2-520"><a href="#cb2-520" aria-hidden="true" tabindex="-1"></a>  <span class="dt">y</span><span class="op">:</span> {<span class="dt">grid</span><span class="op">:</span> <span class="kw">true</span>}<span class="op">,</span></span>
+<span id="cb2-521"><a href="#cb2-521" aria-hidden="true" tabindex="-1"></a>  <span class="dt">x</span><span class="op">:</span> {<span class="dt">round</span><span class="op">:</span> <span class="kw">true</span>}<span class="op">,</span></span>
+<span id="cb2-522"><a href="#cb2-522" aria-hidden="true" tabindex="-1"></a>  <span class="dt">marks</span><span class="op">:</span> [</span>
+<span id="cb2-523"><a href="#cb2-523" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">rectY</span>(</span>
+<span id="cb2-524"><a href="#cb2-524" aria-hidden="true" tabindex="-1"></a>      ols_data<span class="op">,</span></span>
+<span id="cb2-525"><a href="#cb2-525" aria-hidden="true" tabindex="-1"></a>      Plot<span class="op">.</span><span class="fu">binX</span>(</span>
+<span id="cb2-526"><a href="#cb2-526" aria-hidden="true" tabindex="-1"></a>        { <span class="dt">y</span><span class="op">:</span> <span class="st">"proportion"</span> }<span class="op">,</span></span>
+<span id="cb2-527"><a href="#cb2-527" aria-hidden="true" tabindex="-1"></a>        {</span>
+<span id="cb2-528"><a href="#cb2-528" aria-hidden="true" tabindex="-1"></a>          <span class="dt">x</span><span class="op">:</span> <span class="st">"ols_estimator"</span><span class="op">,</span></span>
+<span id="cb2-529"><a href="#cb2-529" aria-hidden="true" tabindex="-1"></a>          <span class="dt">thresholds</span><span class="op">:</span> binThresholds<span class="op">,</span>   <span class="co">// fixed # of bins</span></span>
+<span id="cb2-530"><a href="#cb2-530" aria-hidden="true" tabindex="-1"></a>          <span class="dt">inset</span><span class="op">:</span> <span class="dv">0</span></span>
+<span id="cb2-531"><a href="#cb2-531" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb2-532"><a href="#cb2-532" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb2-533"><a href="#cb2-533" aria-hidden="true" tabindex="-1"></a>    )<span class="op">,</span></span>
+<span id="cb2-534"><a href="#cb2-534" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">ruleY</span>([<span class="dv">0</span>])</span>
+<span id="cb2-535"><a href="#cb2-535" aria-hidden="true" tabindex="-1"></a>  ]</span>
+<span id="cb2-536"><a href="#cb2-536" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div>
 <div id="ojs-cell-2-1" data-nodetype="declaration">
@@ -763,7 +763,7 @@ Figure&nbsp;2: Centered sampling distributions of the sample means. Observations
 </figcaption>
 </figure>
 </div>
-<p>In <a href="#fig-lindeberg_convergence" class="quarto-xref">Figure&nbsp;3</a>, we can see how <span class="math inline">\(L_1\)</span> is not satisfied, since instead of converging to 0 it bounces, even with <span class="math inline">\(n=500,000\)</span>.</p>
+<p>In <a href="#fig-lindeberg_convergence" class="quarto-xref">Figure&nbsp;3</a>, we can see that <span class="math inline">\(L_1\)</span> is not satisfied, since it converges extremely slowly to <span class="math inline">\(0\)</span> and does not reach it even at <span class="math inline">\(n = 500{,}000\)</span>.</p>
 <div id="fig-lindeberg_convergence" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-lindeberg_convergence-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
