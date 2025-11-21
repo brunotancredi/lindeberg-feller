@@ -3,7 +3,7 @@ library(gganimate)
 
 set.seed(12345)
 
-lindeberg_empirical <- function(x, eps = 1, max_n = 50000) {
+lindeberg_empirical <- function(x, eps = 1, max_n = 500000) {
   
   n_vals <- round(seq(100, max_n, by=100))
   results <- numeric(max_n / 100 - 1)

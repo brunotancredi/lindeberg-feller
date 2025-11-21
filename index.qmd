@@ -36,9 +36,13 @@ csl: https://www.zotero.org/styles/apa
 </div>
 
 
-Here, I’m going to present generalizations of the Central Limit Theorem, such as the Lindeberg–Levy–Feller Central Limit Theorem and Lyapunov’s Central Limit Theorem. The applications of the asymptotic behavior of the sample mean of random variables extend across all areas of statistics, being used for inference, hypothesis testing, estimation theory, among many others.
+I’m going to present generalizations of the Central Limit Theorem, such as the Lindeberg–Levy–Feller Central Limit Theorem and Lyapunov’s Central Limit Theorem. 
+
+The applications of the asymptotic behavior of the sample mean of random variables extend across all areas of statistics, being used for inference, hypothesis testing, estimation theory, among many others.
 
 The reference material has been drawn from the books Probability: A Graduate Course [@gut2013probability] and Asymptotic Statistics [@Vaart_1998], from the Large Sample Theory lectures by Prof. Jessica Li available on YouTube [@li_large_sample_theory_2020], and from the lecture notes by Prof. Marco Scavino for the Probabilidad II course at the Universidad de la República.
+
+All the code is available in my [GitHub repository](https://github.com/brunotancredi/lindeberg-feller).
 
 ## Central Limit Theorem
 
@@ -47,7 +51,7 @@ Probably we are familiar with the Central Limit Theorem (@thm-clt).
 ::: {#thm-clt .theorem}
 ## Central Limit Theorem
 
-Let $\{X_n\}_{n \geq  1}$ be a sequence of **independent** and **identical distributed** random variables with finite expectation $\mu$ and and positive, finite variance $\sigma^2$, and set $S_n = X_1 + X_2 + \dots + X_n, n \geq 1$. Then
+Let $\{X_n\}_{n \geq  1}$ be a sequence of **independent** and **identical distributed** random variables with finite expectation $\mu$ and positive, finite variance $\sigma^2$, and set $S_n = X_1 + X_2 + \dots + X_n, n \geq 1$. Then
 
 $$
 \frac{S_n - n\mu}{\sigma\sqrt{n}} \, \overset{d}{\rightarrow} \, \mathcal{N}(0,1), \quad \text{as} \quad n \rightarrow \infty
@@ -61,7 +65,7 @@ $$
 \sqrt{n}\frac{\bar{X}_n - \mu}{\sigma} \, \overset{d}{\rightarrow} \, \mathcal{N}(0,1), \quad \text{as} \quad n \rightarrow \infty
 $$
 
-But is easy to see that is analagous at the one stated above
+But is easy to see that is equivalent at the one stated above
 
 $$
 \sqrt{n}\frac{\bar{X}_n - \mu}{\sigma}
@@ -124,7 +128,7 @@ Plot.plot({
 })
 ```
 
-The problem with the theorem is that requires a two strong assumptions **independency** and **identical distribution**, what if I told you that we can relax one of the conditions?
+The issue with the theorem is that it relies on two strong assumptions: **independence** and **identical distribution**. But what if I told you we could relax one of them?
 
 ## Lindeberg-Lévy-Feller
 
@@ -551,7 +555,7 @@ So we have two possibilities: either I ran the experiment infinitely many times,
 
 ![Centered sampling distributions of the sample means. Observations exceeding 5 standard deviations are highlighted in green, while those exceeding 10 standard deviations are highlighted in red.](sampling_distribution_means.png){#fig-distribution-means}
 
-In @fig-lindeberg_convergence, we can see how $L_1$ is not satisficied, since instead of converging to 0 it bounces, even with $n=50000$.
+In @fig-lindeberg_convergence, we can see how $L_1$ is not satisficied, since instead of converging to 0 it bounces, even with $n=500,000$.
 
 ![Evolution of the empirical Lindeberg condition for an arbitrary ε = 0.2](lindeberg_convergence.gif){#fig-lindeberg_convergence}
 
@@ -559,7 +563,7 @@ As a final comment, here we are working with citations in papers that have a cer
 
 ## Comic Relief
 
-> The Swedish mathematician Harald Cramér met Lindeberg in 1922. He later recalled this story about Lindeberg and the beautiful farm he owned. “When he was reproached for not being sufficiently active in his scientific work, he said *‘Well, I am really a farmer.’* And if somebody happened to say that his farm was not properly cultivated, his answer was *‘Of course my real job is to be a professor.’* …” [@lindeberg_wikipedia]
+> The Swedish mathematician Harald Cramér met Lindeberg in 1922. He later recalled this story about Lindeberg and the beautiful farm he owned. “When he (Lindeberg) was reproached for not being sufficiently active in his scientific work, he said *‘Well, I am really a farmer.’* And if somebody happened to say that his farm was not properly cultivated, his answer was *‘Of course my real job is to be a professor.’* …” [@lindeberg_wikipedia]
 
 
 ### References
