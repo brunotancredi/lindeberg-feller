@@ -239,7 +239,7 @@ Note
 <p><span class="math display">\[
 \sqrt{n}\frac{\bar{X}_n - \mu}{\sigma} \, \overset{d}{\rightarrow} \, \mathcal{N}(0,1), \quad \text{as} \quad n \rightarrow \infty
 \]</span></p>
-<p>But is easy to see that is equivalent at the one stated above</p>
+<p>But is easy to see that is equivalent to the one stated above</p>
 <p><span class="math display">\[
 \sqrt{n}\frac{\bar{X}_n - \mu}{\sigma}
 = \sqrt{n}\frac{\frac{S_n}{n} - \mu}{\sigma}
@@ -476,7 +476,7 @@ Sketch of the proof
 </section>
 <section id="example" class="level2">
 <h2 class="anchored" data-anchor-id="example">Example</h2>
-<p>A cool application of Lindeberg-Feller theorem is in the area of Linear Regression. For those that are in a Regression course, or already take one, you will have seen that the Ordinary Least Squares (OLS) estimator follows a normal distribution when the errors are normal. But … <strong><em>what if the errors are not normal?</em></strong> Well, under certain assumptions we can use the Lindeberg-Lévy-Feller theorem to show that the OLS estimator assympotically follows a normal distribution. For simplicity we are going to prove it for the estimator of the slope coefficient in a simple linear regression model (SLR).</p>
+<p>A cool application of Lindeberg-Feller theorem is in the area of Linear Regression. For those that are in a Regression course, or already take one, you will have seen that the Ordinary Least Squares (OLS) estimator follows a normal distribution when the errors are normal. But … <strong><em>what if the errors are not normal?</em></strong> Well, under certain assumptions we can use the Lindeberg-Lévy-Feller theorem to show that the OLS estimator asymptotically follows a normal distribution. For simplicity we are going to prove it for the estimator of the slope coefficient in a simple linear regression model (SLR).</p>
 <p><span id="eq-lin-reg"><span class="math display">\[
 y_i = \beta_0 + \beta_1x_i + e_i, \quad e_i \quad i.i.d \quad \forall i = 1, \dots, n
 \tag{5}\]</span></span></p>
@@ -498,14 +498,14 @@ W_{ni} := (x_i - \bar{X}_n)e_i
 \hat{\beta}_{1n} = \beta_1 + \frac{\sum_{i=1}^nW_{ni}}{\sum_{i=1}^n(x_i - \bar{X}_n)^2}
 \]</span></p>
 <p>We have that the expected value of <span class="math inline">\(W_{ni}\)</span> is zero and its variance is given by <span class="math inline">\(\sigma^2(x_i - \bar{X})^2\)</span>, since the only random part is <span class="math inline">\(e_i\)</span> and they are i.i.d, with mean zero and variance <span class="math inline">\(\sigma^2\)</span>.</p>
-<p>Our goal is to proof that <span id="eq-ols-convergence"><span class="math display">\[
+<p>Our goal is to prove that <span id="eq-ols-convergence"><span class="math display">\[
 \frac{\sum_{i=1}^{n}W_{ni}}{\sigma\sqrt(\sum_{i=1}^{n}(x_i - \bar{X}_n)^2)} \overset{d}{\rightarrow} \mathcal{N}(0,1), \quad \text{as} \quad n \rightarrow \infty
 \tag{8}\]</span></span></p>
-<p>Note that proving these we are proving <span class="math inline">\(\hat{\beta}_{1n} \overset{d}{\rightarrow} \mathcal{N}(\beta_1, \frac{\sigma^2}{\sum_{i=1}^n(x_i - \bar{X_n})^2})\)</span> since</p>
+<p>Note that proving these we are proving <span class="math inline">\(\hat{\beta}_{1n} \overset{d}{\rightarrow} \mathcal{N}(\beta_1, \frac{\sigma^2}{\sum_{i=1}^n(x_i - \bar{X}_n)^2})\)</span> since</p>
 <p><span class="math display">\[\begin{align*}
 \hat{\beta}_{1n} &amp;= \beta_1 + \frac{\sum_{i=1}^nW_{ni}}{\sum_{i=1}^n(x_i - \bar{X}_n)^2} \\
 &amp;= \beta_1 + \frac{\sigma}{\sqrt{\sum_{i=1}^n(x_i - \bar{X}_n)^2}} \cdot \frac{\sum_{i=1}^{n}W_{ni}}{\sigma\sqrt(\sum_{i=1}^{n}(x_i - \bar{X})^2)}\\
-&amp;\overset{d}{\rightarrow} \beta_1 + \frac{\sigma}{\sqrt{\sum_{i=1}^n(x_i - \bar{X}_n)^2}} \cdot Z = \mathcal{N}\left(\beta_1, \frac{\sigma^2}{\sum_{i=1}^n(x_i - \bar{X_n})^2}\right)
+&amp;\overset{d}{\rightarrow} \beta_1 + \frac{\sigma}{\sqrt{\sum_{i=1}^n(x_i - \bar{X}_n)^2}} \cdot Z = \mathcal{N}\left(\beta_1, \frac{\sigma^2}{\sum_{i=1}^n(x_i - \bar{X}_n)^2}\right)
 \end{align*}\]</span></p>
 <p>Thanks to Lindeberg-Lévy-Feller theorem <a href="#thm-llf" class="quarto-xref">Theorem&nbsp;2</a>, we only need to prove that <span class="math inline">\(L_1\)</span> (<a href="#eq-Lind1" class="quarto-xref">Equation&nbsp;2</a>) holds for the sequence <span class="math inline">\(\{W_{ni}\}_{i=1}^{n}\)</span> to conclude that <a href="#eq-ols-convergence" class="quarto-xref">Equation&nbsp;8</a> holds.</p>
 <div id="nte-proof" class="callout callout-style-default callout-note callout-titled" title="Example Proof">
@@ -522,18 +522,18 @@ Note&nbsp;1: Example Proof
 <div class="callout-body-container callout-body">
 <p>The Lindeberg condition is given by</p>
 <p><span class="math display">\[
-\frac{1}{V_n}\sum_{i=1}^n
+\frac{1}{V_n^2}\sum_{i=1}^n
 \mathbb{E}\!\left[ W_{ni}^2 \mathbf{1}\{ |W_{ni}| &gt; \varepsilon V_n \} \right].
 \]</span></p>
 <p>Replacing by the definition of <span class="math inline">\(W_{ni}\)</span>,</p>
 <p><span class="math display">\[
-\frac{1}{V_n} \sum_{i=1}^n
+\frac{1}{V_n^2} \sum_{i=1}^n
 \mathbb{E}\!\left[ ((x_i - \bar X_n)e_i)^2
      \mathbf{1}\{ |(x_i - \bar X_n)e_i| \ge \varepsilon V_n \} \right].
 \]</span></p>
 <p>This can be written as</p>
 <p><span class="math display">\[
-\frac{1}{V_n} \sum_{i=1}^n (x_i - \bar X_n)^2
+\frac{1}{V_n^2} \sum_{i=1}^n (x_i - \bar X_n)^2
      \mathbb{E}\!\left[ e_i^2 \mathbf{1}\left\{ |e_i| \ge
      \frac{\varepsilon V_n}{|x_i - \bar X_n|} \right\} \right].
 \]</span></p>
@@ -557,24 +557,24 @@ M := \max_{j=1,\dots,n} |x_j - \bar X_n|.
 <p><strong>Returning to the condition</strong></p>
 <p>Using the previous bound,</p>
 <p><span class="math display">\[
-\le \frac{1}{V_n} \sum_{i=1}^n (x_i - \bar X_n)^2
+\le \frac{1}{V_n^2} \sum_{i=1}^n (x_i - \bar X_n)^2
 \mathbb{E}\!\left[
 e_i^2 \mathbf{1}\!\left\{ |e_i| \ge \frac{\varepsilon V_n}{M} \right\}
 \right].
 \]</span></p>
 <p>Since the <span class="math inline">\(e_i\)</span> are independent and identically distributed,</p>
 <p><span class="math display">\[
-= \frac{1}{V_n} \left[ \sum_{i=1}^n (x_i - \bar X_n)^2 \right]
+= \frac{1}{V_n^2} \left[ \sum_{i=1}^n (x_i - \bar X_n)^2 \right]
 \mathbb{E}\!\left[
 e_1^2 \mathbf{1}\!\left\{ |e_1| \ge \frac{\varepsilon V_n}{M} \right\}
 \right].
 \]</span></p>
-<p>Using the definition of <span class="math inline">\(V_n = \sigma^2 \sum_{i=1}^n (x_i - \bar X_n)^2\)</span>,</p>
+<p>Using the definition of <span class="math inline">\(V_n^2  = \sigma^2 \sum_{i=1}^n (x_i - \bar X_n)^2\)</span>,</p>
 <p><span class="math display">\[
 = \frac{1}{\sigma^2}
 \mathbb{E}\!\left[
 e_1^2 \mathbf{1}\!\left\{ |e_1| \ge
-\varepsilon \frac{\sqrt{\sum (x_i - \bar X_n)^2}}{M}
+\varepsilon \sigma \frac{\sqrt{\sum (x_i - \bar X_n)^2}}{M}
 \right\} \right].
 \]</span></p>
 <p>Thus,</p>
@@ -582,7 +582,7 @@ e_1^2 \mathbf{1}\!\left\{ |e_1| \ge
 = \frac{1}{\sigma^2}
 \mathbb{E}\!\left[
 e_1^2 \mathbf{1}\!\left\{ |e_1| \ge
-\varepsilon \sqrt{\frac{\sum (x_i - \bar X_n)^2}{M^2}}
+\varepsilon \sigma  \sqrt{\frac{\sum (x_i - \bar X_n)^2}{M^2}}
 \right\}
 \right].
 \]</span></p>
@@ -598,7 +598,7 @@ e_1^2 \mathbf{1}\!\left\{ |e_1| \ge
 <p><span class="math display">\[
 e_1^2 \mathbf{1}\!\left\{
 |e_1| \ge
-\varepsilon \sqrt{\frac{\sum (x_i - \bar X_n)^2}{M^2}}
+\varepsilon \sigma  \sqrt{\frac{\sum (x_i - \bar X_n)^2}{M^2}}
 \right\}
 \longrightarrow 0
 \quad \text{a.s.}
@@ -614,7 +614,7 @@ e_1^2 \mathbf{1}\!\left\{
 <p><span class="math display">\[
 e_1^2\,\mathbf{1}\!\left\{
 |e_1| \ge
-\varepsilon \sqrt{\frac{\sum (x_i - \bar X_n)^2}{M^2}}
+\varepsilon \sigma  \sqrt{\frac{\sum (x_i - \bar X_n)^2}{M^2}}
 \right\}
 \longrightarrow 0,
 \]</span></p>
@@ -623,7 +623,7 @@ e_1^2\,\mathbf{1}\!\left\{
 0 \le
 e_1^2\,\mathbf{1}\!\left\{
 |e_1| \ge
-\varepsilon \sqrt{\frac{\sum (x_i - \bar X_n)^2}{M^2}}
+\varepsilon \sigma  \sqrt{\frac{\sum (x_i - \bar X_n)^2}{M^2}}
 \right\}
 \le e_1^2.
 \]</span></p>
@@ -632,7 +632,7 @@ e_1^2\,\mathbf{1}\!\left\{
 \mathbb{E}\!\left[
 e_1^2\,\mathbf{1}\!\left\{
 |e_1| \ge
-\varepsilon \sqrt{\frac{\sum (x_i - \bar X_n)^2}{M^2}}
+\varepsilon \sigma \sqrt{\frac{\sum (x_i - \bar X_n)^2}{M^2}}
 \right\}
 \right]
 \longrightarrow 0 \qquad (n \to \infty).
@@ -763,7 +763,7 @@ Figure&nbsp;2: Centered sampling distributions of the sample means. Observations
 </figcaption>
 </figure>
 </div>
-<p>In <a href="#fig-lindeberg_convergence" class="quarto-xref">Figure&nbsp;3</a>, we can see how <span class="math inline">\(L_1\)</span> is not satisficied, since instead of converging to 0 it bounces, even with <span class="math inline">\(n=500,000\)</span>.</p>
+<p>In <a href="#fig-lindeberg_convergence" class="quarto-xref">Figure&nbsp;3</a>, we can see how <span class="math inline">\(L_1\)</span> is not satisfied, since instead of converging to 0 it bounces, even with <span class="math inline">\(n=500,000\)</span>.</p>
 <div id="fig-lindeberg_convergence" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-lindeberg_convergence-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
