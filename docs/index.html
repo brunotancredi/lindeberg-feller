@@ -208,9 +208,26 @@ window.Quarto = {
   gap:12px;
   flex-wrap:nowrap;
 ">
-<p><img src="Lindeberg.jpg" style="width:200px;height:300px;object-fit:cover;border-radius:4px;"> <img src="levy.jpg" style="width:200px;height:300px;object-fit:cover;border-radius:4px;"> <img src="Feller.jpeg" style="width:200px;height:300px;object-fit:cover;border-radius:4px;"></p>
+<figure style="margin:0; text-align:center;" class="figure">
+<img src="Lindeberg.jpg" style="width:200px;height:300px;object-fit:cover;border-radius:4px;" class="figure-img">
+<figcaption style="margin-top:4px; font-size:14px;">
+Jarl Waldemar Lindeberg
+</figcaption>
+</figure>
+<figure style="margin:0; text-align:center;" class="figure">
+<img src="levy.jpg" style="width:200px;height:300px;object-fit:cover;border-radius:4px;" class="figure-img">
+<figcaption style="margin-top:4px; font-size:14px;">
+Paul Lévy<br> <span style="font-size:8px;"> Photo: Konrad Jacobs, Erlangen, <a href="https://creativecommons.org/licenses/by-sa/2.0/de/deed.en" target="_blank" rel="noopener noreferrer"> CC BY-SA 2.0 DE </a> <br>via Wikimedia Commons </span>
+</figcaption>
+</figure>
+<figure style="margin:0; text-align:center;" class="figure">
+<img src="Feller.jpeg" style="width:200px;height:300px;object-fit:cover;border-radius:4px;" class="figure-img">
+<figcaption style="margin-top:4px; font-size:14px;">
+William Feller
+</figcaption>
+</figure>
 </div>
-<p>I’m going to present generalizations of the Central Limit Theorem, such as the Lindeberg–Levy–Feller Central Limit Theorem and Lyapunov’s Central Limit Theorem.</p>
+<p>I’m going to present generalizations of the Central Limit Theorem, such as the Lindeberg–Lévy–Feller Central Limit Theorem and Lyapunov’s Central Limit Theorem.</p>
 <p>The applications of the asymptotic behavior of the sample mean of random variables extend across all areas of statistics, being used for inference, hypothesis testing, estimation theory, among many others.</p>
 <p>The reference material has been drawn from the books Probability: A Graduate Course <span class="citation" data-cites="gut2013probability">(<a href="#ref-gut2013probability" role="doc-biblioref">Gut, 2013</a>)</span> and Asymptotic Statistics <span class="citation" data-cites="Vaart_1998">(<a href="#ref-Vaart_1998" role="doc-biblioref">Vaart, 1998</a>)</span>, from the Large Sample Theory lectures by Prof.&nbsp;Jessica Li available on YouTube <span class="citation" data-cites="li_large_sample_theory_2020">(<a href="#ref-li_large_sample_theory_2020" role="doc-biblioref">Li, 2020</a>)</span>, and from the lecture notes by Prof.&nbsp;Marco Scavino for the Probabilidad II course at the Universidad de la República.</p>
 <p>All the code is available in my <a href="https://github.com/brunotancredi/lindeberg-feller">GitHub repository</a>.</p>
@@ -253,47 +270,47 @@ Note
 <h3 class="anchored" data-anchor-id="simulating-the-clt">Simulating the CLT</h3>
 <p>The widget below shows the Central Limit Theorem in action. It uses 5,000 Monte Carlo simulations for different sample sizes under uniform and exponential distributions, and displays the resulting histogram of the sample mean.</p>
 <div class="cell panel-input card bg-light p-2" width="100%">
-<div class="sourceCode cell-code hidden" id="cb1" data-startfrom="88" data-source-offset="-0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 87;"><span id="cb1-88"><a href="#cb1-88" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> { aq<span class="op">,</span> op } <span class="im">from</span> <span class="st">'@uwdata/arquero'</span></span>
-<span id="cb1-89"><a href="#cb1-89" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-90"><a href="#cb1-90" aria-hidden="true" tabindex="-1"></a>my_data <span class="op">=</span> aq<span class="op">.</span><span class="fu">loadCSV</span>(<span class="st">"https://raw.githubusercontent.com/brunotancredi/lindeberg-feller/refs/heads/main/CLT_simulation_data.csv"</span>)</span>
-<span id="cb1-91"><a href="#cb1-91" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-92"><a href="#cb1-92" aria-hidden="true" tabindex="-1"></a>viewof n <span class="op">=</span> Inputs<span class="op">.</span><span class="fu">range</span>(</span>
-<span id="cb1-93"><a href="#cb1-93" aria-hidden="true" tabindex="-1"></a>  [<span class="dv">1</span><span class="op">,</span> <span class="dv">200</span>]<span class="op">,</span> </span>
-<span id="cb1-94"><a href="#cb1-94" aria-hidden="true" tabindex="-1"></a>  {<span class="dt">value</span><span class="op">:</span> <span class="dv">1</span><span class="op">,</span> <span class="dt">step</span><span class="op">:</span> <span class="dv">1</span><span class="op">,</span> <span class="dt">label</span><span class="op">:</span> <span class="st">"Sample Size:"</span>}</span>
-<span id="cb1-95"><a href="#cb1-95" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb1-96"><a href="#cb1-96" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-97"><a href="#cb1-97" aria-hidden="true" tabindex="-1"></a>viewof distribution <span class="op">=</span> Inputs<span class="op">.</span><span class="fu">radio</span>([<span class="st">"Uniform"</span><span class="op">,</span> <span class="st">"Exponential"</span>]<span class="op">,</span> {<span class="dt">value</span><span class="op">:</span> <span class="st">"Uniform"</span><span class="op">,</span> <span class="dt">label</span><span class="op">:</span> <span class="st">"Distribution"</span>})</span>
-<span id="cb1-98"><a href="#cb1-98" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-99"><a href="#cb1-99" aria-hidden="true" tabindex="-1"></a>normalData <span class="op">=</span> <span class="bu">Array</span><span class="op">.</span><span class="fu">from</span>({ <span class="dt">length</span><span class="op">:</span> <span class="dv">100</span> }<span class="op">,</span> (_<span class="op">,</span> i) <span class="kw">=&gt;</span> {</span>
-<span id="cb1-100"><a href="#cb1-100" aria-hidden="true" tabindex="-1"></a>  <span class="kw">let</span> x <span class="op">=</span> <span class="op">-</span><span class="dv">3</span> <span class="op">+</span> (i <span class="op">/</span> <span class="dv">99</span>) <span class="op">*</span> <span class="dv">6</span><span class="op">;</span> <span class="co">// Range from -3 to 3</span></span>
-<span id="cb1-101"><a href="#cb1-101" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> { x<span class="op">,</span> <span class="dt">y</span><span class="op">:</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">exp</span>(<span class="op">-</span><span class="fl">0.5</span> <span class="op">*</span> x <span class="op">*</span> x) <span class="op">/</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">sqrt</span>(<span class="dv">2</span> <span class="op">*</span> <span class="bu">Math</span><span class="op">.</span><span class="cn">PI</span>) }<span class="op">;</span></span>
-<span id="cb1-102"><a href="#cb1-102" aria-hidden="true" tabindex="-1"></a>})<span class="op">;</span></span>
-<span id="cb1-103"><a href="#cb1-103" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-104"><a href="#cb1-104" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-105"><a href="#cb1-105" aria-hidden="true" tabindex="-1"></a>my_data_2 <span class="op">=</span> my_data<span class="op">.</span><span class="fu">params</span>({ distribution })<span class="op">.</span><span class="fu">filter</span>(d <span class="kw">=&gt;</span> d<span class="op">.</span><span class="at">distribution</span> <span class="op">===</span> distribution)<span class="op">;</span></span>
-<span id="cb1-106"><a href="#cb1-106" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-107"><a href="#cb1-107" aria-hidden="true" tabindex="-1"></a>point <span class="op">=</span> <span class="bu">Array</span><span class="op">.</span><span class="fu">from</span>({<span class="dt">length</span><span class="op">:</span> <span class="dv">1</span>}<span class="op">,</span> (_<span class="op">,</span> i) <span class="kw">=&gt;</span> {<span class="cf">return</span> {<span class="dt">x</span><span class="op">:</span> <span class="dv">0</span><span class="op">,</span> <span class="dt">y</span><span class="op">:</span> <span class="fl">0.5</span>}})</span>
-<span id="cb1-108"><a href="#cb1-108" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-109"><a href="#cb1-109" aria-hidden="true" tabindex="-1"></a>Plot<span class="op">.</span><span class="fu">plot</span>({</span>
-<span id="cb1-110"><a href="#cb1-110" aria-hidden="true" tabindex="-1"></a>    <span class="dt">width</span><span class="op">:</span> <span class="dv">1000</span><span class="op">,</span></span>
-<span id="cb1-111"><a href="#cb1-111" aria-hidden="true" tabindex="-1"></a>    <span class="dt">height</span><span class="op">:</span> <span class="dv">500</span><span class="op">,</span></span>
-<span id="cb1-112"><a href="#cb1-112" aria-hidden="true" tabindex="-1"></a>    <span class="dt">y</span><span class="op">:</span> {<span class="dt">grid</span><span class="op">:</span> <span class="kw">true</span>}<span class="op">,</span></span>
-<span id="cb1-113"><a href="#cb1-113" aria-hidden="true" tabindex="-1"></a>    <span class="dt">x</span><span class="op">:</span> {<span class="dt">round</span><span class="op">:</span> <span class="kw">true</span>}<span class="op">,</span>    </span>
-<span id="cb1-114"><a href="#cb1-114" aria-hidden="true" tabindex="-1"></a>    <span class="dt">marks</span><span class="op">:</span> [</span>
-<span id="cb1-115"><a href="#cb1-115" aria-hidden="true" tabindex="-1"></a>      Plot<span class="op">.</span><span class="fu">rectY</span>(my_data_2<span class="op">,</span> </span>
-<span id="cb1-116"><a href="#cb1-116" aria-hidden="true" tabindex="-1"></a>                Plot<span class="op">.</span><span class="fu">binX</span>({<span class="dt">y</span><span class="op">:</span> (a<span class="op">,</span> bin) <span class="kw">=&gt;</span> {</span>
-<span id="cb1-117"><a href="#cb1-117" aria-hidden="true" tabindex="-1"></a>                              <span class="cf">return</span> a<span class="op">.</span><span class="at">length</span> <span class="op">/</span> (<span class="dv">5000</span><span class="op">*</span>(bin<span class="op">.</span><span class="at">x2</span> <span class="op">-</span> bin<span class="op">.</span><span class="at">x1</span>))<span class="op">;</span></span>
-<span id="cb1-118"><a href="#cb1-118" aria-hidden="true" tabindex="-1"></a>                           }}<span class="op">,</span> </span>
-<span id="cb1-119"><a href="#cb1-119" aria-hidden="true" tabindex="-1"></a>                          {<span class="dt">x</span><span class="op">:</span> {<span class="dt">value</span><span class="op">:</span> n<span class="op">.</span><span class="fu">toString</span>()<span class="op">,</span> </span>
-<span id="cb1-120"><a href="#cb1-120" aria-hidden="true" tabindex="-1"></a>                               <span class="dt">inset</span><span class="op">:</span> <span class="dv">0</span><span class="op">,</span></span>
-<span id="cb1-121"><a href="#cb1-121" aria-hidden="true" tabindex="-1"></a>                               <span class="dt">thresholds</span><span class="op">:</span> d3<span class="op">.</span><span class="fu">range</span>(<span class="op">-</span><span class="dv">3</span><span class="op">,</span><span class="dv">3</span> <span class="op">+</span> <span class="fl">0.11</span><span class="op">,</span> <span class="fl">0.11</span>)<span class="op">,</span></span>
-<span id="cb1-122"><a href="#cb1-122" aria-hidden="true" tabindex="-1"></a>                               <span class="dt">domain</span><span class="op">:</span> [<span class="op">-</span><span class="dv">3</span><span class="op">,</span> <span class="dv">3</span>]<span class="op">,</span></span>
-<span id="cb1-123"><a href="#cb1-123" aria-hidden="true" tabindex="-1"></a>                               }}))<span class="op">,</span></span>
-<span id="cb1-124"><a href="#cb1-124" aria-hidden="true" tabindex="-1"></a>      Plot<span class="op">.</span><span class="fu">ruleY</span>([<span class="dv">0</span>])<span class="op">,</span></span>
-<span id="cb1-125"><a href="#cb1-125" aria-hidden="true" tabindex="-1"></a>      Plot<span class="op">.</span><span class="fu">line</span>(normalData<span class="op">,</span> { <span class="dt">x</span><span class="op">:</span> <span class="st">"x"</span><span class="op">,</span> <span class="dt">y</span><span class="op">:</span> <span class="st">"y"</span><span class="op">,</span> <span class="dt">stroke</span><span class="op">:</span> <span class="st">"red"</span> })<span class="op">,</span> <span class="co">//Normal</span></span>
-<span id="cb1-126"><a href="#cb1-126" aria-hidden="true" tabindex="-1"></a>      Plot<span class="op">.</span><span class="fu">dot</span>(point<span class="op">,</span> {<span class="dt">x</span><span class="op">:</span> <span class="st">"x"</span><span class="op">,</span> <span class="dt">y</span><span class="op">:</span> <span class="st">"y"</span><span class="op">,</span> <span class="dt">r</span><span class="op">:</span> <span class="dv">0</span>})    </span>
-<span id="cb1-127"><a href="#cb1-127" aria-hidden="true" tabindex="-1"></a>    ]</span>
-<span id="cb1-128"><a href="#cb1-128" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code hidden" id="cb1" data-startfrom="112" data-source-offset="-0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 111;"><span id="cb1-112"><a href="#cb1-112" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> { aq<span class="op">,</span> op } <span class="im">from</span> <span class="st">'@uwdata/arquero'</span></span>
+<span id="cb1-113"><a href="#cb1-113" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-114"><a href="#cb1-114" aria-hidden="true" tabindex="-1"></a>my_data <span class="op">=</span> aq<span class="op">.</span><span class="fu">loadCSV</span>(<span class="st">"https://raw.githubusercontent.com/brunotancredi/lindeberg-feller/refs/heads/main/CLT_simulation_data.csv"</span>)</span>
+<span id="cb1-115"><a href="#cb1-115" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-116"><a href="#cb1-116" aria-hidden="true" tabindex="-1"></a>viewof n <span class="op">=</span> Inputs<span class="op">.</span><span class="fu">range</span>(</span>
+<span id="cb1-117"><a href="#cb1-117" aria-hidden="true" tabindex="-1"></a>  [<span class="dv">1</span><span class="op">,</span> <span class="dv">200</span>]<span class="op">,</span> </span>
+<span id="cb1-118"><a href="#cb1-118" aria-hidden="true" tabindex="-1"></a>  {<span class="dt">value</span><span class="op">:</span> <span class="dv">1</span><span class="op">,</span> <span class="dt">step</span><span class="op">:</span> <span class="dv">1</span><span class="op">,</span> <span class="dt">label</span><span class="op">:</span> <span class="st">"Sample Size:"</span>}</span>
+<span id="cb1-119"><a href="#cb1-119" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-120"><a href="#cb1-120" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-121"><a href="#cb1-121" aria-hidden="true" tabindex="-1"></a>viewof distribution <span class="op">=</span> Inputs<span class="op">.</span><span class="fu">radio</span>([<span class="st">"Uniform"</span><span class="op">,</span> <span class="st">"Exponential"</span>]<span class="op">,</span> {<span class="dt">value</span><span class="op">:</span> <span class="st">"Uniform"</span><span class="op">,</span> <span class="dt">label</span><span class="op">:</span> <span class="st">"Distribution"</span>})</span>
+<span id="cb1-122"><a href="#cb1-122" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-123"><a href="#cb1-123" aria-hidden="true" tabindex="-1"></a>normalData <span class="op">=</span> <span class="bu">Array</span><span class="op">.</span><span class="fu">from</span>({ <span class="dt">length</span><span class="op">:</span> <span class="dv">100</span> }<span class="op">,</span> (_<span class="op">,</span> i) <span class="kw">=&gt;</span> {</span>
+<span id="cb1-124"><a href="#cb1-124" aria-hidden="true" tabindex="-1"></a>  <span class="kw">let</span> x <span class="op">=</span> <span class="op">-</span><span class="dv">3</span> <span class="op">+</span> (i <span class="op">/</span> <span class="dv">99</span>) <span class="op">*</span> <span class="dv">6</span><span class="op">;</span> <span class="co">// Range from -3 to 3</span></span>
+<span id="cb1-125"><a href="#cb1-125" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> { x<span class="op">,</span> <span class="dt">y</span><span class="op">:</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">exp</span>(<span class="op">-</span><span class="fl">0.5</span> <span class="op">*</span> x <span class="op">*</span> x) <span class="op">/</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">sqrt</span>(<span class="dv">2</span> <span class="op">*</span> <span class="bu">Math</span><span class="op">.</span><span class="cn">PI</span>) }<span class="op">;</span></span>
+<span id="cb1-126"><a href="#cb1-126" aria-hidden="true" tabindex="-1"></a>})<span class="op">;</span></span>
+<span id="cb1-127"><a href="#cb1-127" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-128"><a href="#cb1-128" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-129"><a href="#cb1-129" aria-hidden="true" tabindex="-1"></a>my_data_2 <span class="op">=</span> my_data<span class="op">.</span><span class="fu">params</span>({ distribution })<span class="op">.</span><span class="fu">filter</span>(d <span class="kw">=&gt;</span> d<span class="op">.</span><span class="at">distribution</span> <span class="op">===</span> distribution)<span class="op">;</span></span>
+<span id="cb1-130"><a href="#cb1-130" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-131"><a href="#cb1-131" aria-hidden="true" tabindex="-1"></a>point <span class="op">=</span> <span class="bu">Array</span><span class="op">.</span><span class="fu">from</span>({<span class="dt">length</span><span class="op">:</span> <span class="dv">1</span>}<span class="op">,</span> (_<span class="op">,</span> i) <span class="kw">=&gt;</span> {<span class="cf">return</span> {<span class="dt">x</span><span class="op">:</span> <span class="dv">0</span><span class="op">,</span> <span class="dt">y</span><span class="op">:</span> <span class="fl">0.5</span>}})</span>
+<span id="cb1-132"><a href="#cb1-132" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-133"><a href="#cb1-133" aria-hidden="true" tabindex="-1"></a>Plot<span class="op">.</span><span class="fu">plot</span>({</span>
+<span id="cb1-134"><a href="#cb1-134" aria-hidden="true" tabindex="-1"></a>    <span class="dt">width</span><span class="op">:</span> <span class="dv">1000</span><span class="op">,</span></span>
+<span id="cb1-135"><a href="#cb1-135" aria-hidden="true" tabindex="-1"></a>    <span class="dt">height</span><span class="op">:</span> <span class="dv">500</span><span class="op">,</span></span>
+<span id="cb1-136"><a href="#cb1-136" aria-hidden="true" tabindex="-1"></a>    <span class="dt">y</span><span class="op">:</span> {<span class="dt">grid</span><span class="op">:</span> <span class="kw">true</span>}<span class="op">,</span></span>
+<span id="cb1-137"><a href="#cb1-137" aria-hidden="true" tabindex="-1"></a>    <span class="dt">x</span><span class="op">:</span> {<span class="dt">round</span><span class="op">:</span> <span class="kw">true</span>}<span class="op">,</span>    </span>
+<span id="cb1-138"><a href="#cb1-138" aria-hidden="true" tabindex="-1"></a>    <span class="dt">marks</span><span class="op">:</span> [</span>
+<span id="cb1-139"><a href="#cb1-139" aria-hidden="true" tabindex="-1"></a>      Plot<span class="op">.</span><span class="fu">rectY</span>(my_data_2<span class="op">,</span> </span>
+<span id="cb1-140"><a href="#cb1-140" aria-hidden="true" tabindex="-1"></a>                Plot<span class="op">.</span><span class="fu">binX</span>({<span class="dt">y</span><span class="op">:</span> (a<span class="op">,</span> bin) <span class="kw">=&gt;</span> {</span>
+<span id="cb1-141"><a href="#cb1-141" aria-hidden="true" tabindex="-1"></a>                              <span class="cf">return</span> a<span class="op">.</span><span class="at">length</span> <span class="op">/</span> (<span class="dv">5000</span><span class="op">*</span>(bin<span class="op">.</span><span class="at">x2</span> <span class="op">-</span> bin<span class="op">.</span><span class="at">x1</span>))<span class="op">;</span></span>
+<span id="cb1-142"><a href="#cb1-142" aria-hidden="true" tabindex="-1"></a>                           }}<span class="op">,</span> </span>
+<span id="cb1-143"><a href="#cb1-143" aria-hidden="true" tabindex="-1"></a>                          {<span class="dt">x</span><span class="op">:</span> {<span class="dt">value</span><span class="op">:</span> n<span class="op">.</span><span class="fu">toString</span>()<span class="op">,</span> </span>
+<span id="cb1-144"><a href="#cb1-144" aria-hidden="true" tabindex="-1"></a>                               <span class="dt">inset</span><span class="op">:</span> <span class="dv">0</span><span class="op">,</span></span>
+<span id="cb1-145"><a href="#cb1-145" aria-hidden="true" tabindex="-1"></a>                               <span class="dt">thresholds</span><span class="op">:</span> d3<span class="op">.</span><span class="fu">range</span>(<span class="op">-</span><span class="dv">3</span><span class="op">,</span><span class="dv">3</span> <span class="op">+</span> <span class="fl">0.11</span><span class="op">,</span> <span class="fl">0.11</span>)<span class="op">,</span></span>
+<span id="cb1-146"><a href="#cb1-146" aria-hidden="true" tabindex="-1"></a>                               <span class="dt">domain</span><span class="op">:</span> [<span class="op">-</span><span class="dv">3</span><span class="op">,</span> <span class="dv">3</span>]<span class="op">,</span></span>
+<span id="cb1-147"><a href="#cb1-147" aria-hidden="true" tabindex="-1"></a>                               }}))<span class="op">,</span></span>
+<span id="cb1-148"><a href="#cb1-148" aria-hidden="true" tabindex="-1"></a>      Plot<span class="op">.</span><span class="fu">ruleY</span>([<span class="dv">0</span>])<span class="op">,</span></span>
+<span id="cb1-149"><a href="#cb1-149" aria-hidden="true" tabindex="-1"></a>      Plot<span class="op">.</span><span class="fu">line</span>(normalData<span class="op">,</span> { <span class="dt">x</span><span class="op">:</span> <span class="st">"x"</span><span class="op">,</span> <span class="dt">y</span><span class="op">:</span> <span class="st">"y"</span><span class="op">,</span> <span class="dt">stroke</span><span class="op">:</span> <span class="st">"red"</span> })<span class="op">,</span> <span class="co">//Normal</span></span>
+<span id="cb1-150"><a href="#cb1-150" aria-hidden="true" tabindex="-1"></a>      Plot<span class="op">.</span><span class="fu">dot</span>(point<span class="op">,</span> {<span class="dt">x</span><span class="op">:</span> <span class="st">"x"</span><span class="op">,</span> <span class="dt">y</span><span class="op">:</span> <span class="st">"y"</span><span class="op">,</span> <span class="dt">r</span><span class="op">:</span> <span class="dv">0</span>})    </span>
+<span id="cb1-151"><a href="#cb1-151" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb1-152"><a href="#cb1-152" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div>
 <div id="ojs-cell-1-1" data-nodetype="declaration">
@@ -640,7 +657,7 @@ e_1^2\,\mathbf{1}\!\left\{
 </div>
 </div>
 </div>
-<p>In <a href="#nte-proof" class="quarto-xref">Note&nbsp;1</a>, we conclude that we can change the identical distribution requirement for</p>
+<p>In <a href="#nte-proof" class="quarto-xref">Note&nbsp;1</a>, we conclude that we can change the normal distribution requirement for</p>
 <p><span class="math display">\[
 \max_{1 \leq j \leq n} \frac{(x_j - \bar{X}_n)^2}{\sum_{i=1}^{n}(x_i - \bar{X}_n)^2} \underset{n \rightarrow \infty}{\rightarrow} 0
 \]</span></p>
@@ -649,45 +666,45 @@ e_1^2\,\mathbf{1}\!\left\{
 <h3 class="anchored" data-anchor-id="example-simulation">Example Simulation</h3>
 <p>To simulate this experiment, we generate data from the linear model <span class="math inline">\(y = 1 + 2x + \epsilon\)</span>, where the errors <span class="math inline">\(\epsilon\)</span> follow an exponential distribution with variance <span class="math inline">\(\sigma^{2} = 64\)</span>. Using Monte Carlo with 5000 replications, we examine the sampling distribution of the OLS estimator for different sample sizes. As shown in the widget, increasing the sample size causes the sampling distribution to approach a normal distribution centered around the true value <span class="math inline">\(\beta_{1} = 2\)</span>.</p>
 <div class="cell panel-input card bg-light p-2" width="100%">
-<div class="sourceCode cell-code hidden" id="cb2" data-startfrom="498" data-source-offset="-42"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 497;"><span id="cb2-498"><a href="#cb2-498" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> aq<span class="op">.</span><span class="fu">loadCSV</span>(<span class="st">"https://raw.githubusercontent.com/brunotancredi/lindeberg-feller/refs/heads/main/ols_montecarlo_simulation.csv"</span>)</span>
-<span id="cb2-499"><a href="#cb2-499" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-500"><a href="#cb2-500" aria-hidden="true" tabindex="-1"></a>viewof z <span class="op">=</span> Inputs<span class="op">.</span><span class="fu">range</span>(</span>
-<span id="cb2-501"><a href="#cb2-501" aria-hidden="true" tabindex="-1"></a>  [<span class="dv">2</span><span class="op">,</span> <span class="dv">500</span>]<span class="op">,</span> </span>
-<span id="cb2-502"><a href="#cb2-502" aria-hidden="true" tabindex="-1"></a>  {<span class="dt">value</span><span class="op">:</span> <span class="dv">2</span><span class="op">,</span> <span class="dt">step</span><span class="op">:</span> <span class="dv">1</span><span class="op">,</span> <span class="dt">label</span><span class="op">:</span> <span class="st">"Sample Size:"</span>}</span>
-<span id="cb2-503"><a href="#cb2-503" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb2-504"><a href="#cb2-504" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-505"><a href="#cb2-505" aria-hidden="true" tabindex="-1"></a>ols_data <span class="op">=</span> data<span class="op">.</span><span class="fu">filter</span>(aq<span class="op">.</span><span class="fu">escape</span>(d <span class="kw">=&gt;</span> d<span class="op">.</span><span class="at">n</span> <span class="op">===</span> z))</span>
-<span id="cb2-506"><a href="#cb2-506" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-507"><a href="#cb2-507" aria-hidden="true" tabindex="-1"></a>binThresholds <span class="op">=</span> {</span>
-<span id="cb2-508"><a href="#cb2-508" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> nbins <span class="op">=</span> <span class="dv">30</span><span class="op">;</span> <span class="co">// &lt;- your desired number of bins</span></span>
-<span id="cb2-509"><a href="#cb2-509" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> [xmin<span class="op">,</span> xmax] <span class="op">=</span> d3<span class="op">.</span><span class="fu">extent</span>(ols_data<span class="op">,</span> d <span class="kw">=&gt;</span> d<span class="op">.</span><span class="at">ols_estimator</span>)<span class="op">;</span></span>
-<span id="cb2-510"><a href="#cb2-510" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> step <span class="op">=</span> (xmax <span class="op">-</span> xmin) <span class="op">/</span> nbins<span class="op">;</span></span>
-<span id="cb2-511"><a href="#cb2-511" aria-hidden="true" tabindex="-1"></a>  <span class="co">// nbins bins = nbins+1 edges</span></span>
-<span id="cb2-512"><a href="#cb2-512" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> d3<span class="op">.</span><span class="fu">range</span>(xmin<span class="op">,</span> xmax <span class="op">+</span> step <span class="op">*</span> <span class="fl">1.0001</span><span class="op">,</span> step)<span class="op">;</span></span>
-<span id="cb2-513"><a href="#cb2-513" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb2-514"><a href="#cb2-514" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-515"><a href="#cb2-515" aria-hidden="true" tabindex="-1"></a>length <span class="op">=</span> ols_data<span class="op">.</span><span class="fu">numRows</span>()</span>
-<span id="cb2-516"><a href="#cb2-516" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-517"><a href="#cb2-517" aria-hidden="true" tabindex="-1"></a>Plot<span class="op">.</span><span class="fu">plot</span>({</span>
-<span id="cb2-518"><a href="#cb2-518" aria-hidden="true" tabindex="-1"></a>  <span class="dt">width</span><span class="op">:</span> <span class="dv">1000</span><span class="op">,</span></span>
-<span id="cb2-519"><a href="#cb2-519" aria-hidden="true" tabindex="-1"></a>  <span class="dt">height</span><span class="op">:</span> <span class="dv">500</span><span class="op">,</span></span>
-<span id="cb2-520"><a href="#cb2-520" aria-hidden="true" tabindex="-1"></a>  <span class="dt">y</span><span class="op">:</span> {<span class="dt">grid</span><span class="op">:</span> <span class="kw">true</span>}<span class="op">,</span></span>
-<span id="cb2-521"><a href="#cb2-521" aria-hidden="true" tabindex="-1"></a>  <span class="dt">x</span><span class="op">:</span> {<span class="dt">round</span><span class="op">:</span> <span class="kw">true</span>}<span class="op">,</span></span>
-<span id="cb2-522"><a href="#cb2-522" aria-hidden="true" tabindex="-1"></a>  <span class="dt">marks</span><span class="op">:</span> [</span>
-<span id="cb2-523"><a href="#cb2-523" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">rectY</span>(</span>
-<span id="cb2-524"><a href="#cb2-524" aria-hidden="true" tabindex="-1"></a>      ols_data<span class="op">,</span></span>
-<span id="cb2-525"><a href="#cb2-525" aria-hidden="true" tabindex="-1"></a>      Plot<span class="op">.</span><span class="fu">binX</span>(</span>
-<span id="cb2-526"><a href="#cb2-526" aria-hidden="true" tabindex="-1"></a>        { <span class="dt">y</span><span class="op">:</span> <span class="st">"proportion"</span> }<span class="op">,</span></span>
-<span id="cb2-527"><a href="#cb2-527" aria-hidden="true" tabindex="-1"></a>        {</span>
-<span id="cb2-528"><a href="#cb2-528" aria-hidden="true" tabindex="-1"></a>          <span class="dt">x</span><span class="op">:</span> <span class="st">"ols_estimator"</span><span class="op">,</span></span>
-<span id="cb2-529"><a href="#cb2-529" aria-hidden="true" tabindex="-1"></a>          <span class="dt">thresholds</span><span class="op">:</span> binThresholds<span class="op">,</span>   <span class="co">// fixed # of bins</span></span>
-<span id="cb2-530"><a href="#cb2-530" aria-hidden="true" tabindex="-1"></a>          <span class="dt">inset</span><span class="op">:</span> <span class="dv">0</span></span>
-<span id="cb2-531"><a href="#cb2-531" aria-hidden="true" tabindex="-1"></a>        }</span>
-<span id="cb2-532"><a href="#cb2-532" aria-hidden="true" tabindex="-1"></a>      )</span>
-<span id="cb2-533"><a href="#cb2-533" aria-hidden="true" tabindex="-1"></a>    )<span class="op">,</span></span>
-<span id="cb2-534"><a href="#cb2-534" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">ruleY</span>([<span class="dv">0</span>])</span>
-<span id="cb2-535"><a href="#cb2-535" aria-hidden="true" tabindex="-1"></a>  ]</span>
-<span id="cb2-536"><a href="#cb2-536" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code hidden" id="cb2" data-startfrom="522" data-source-offset="-42"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 521;"><span id="cb2-522"><a href="#cb2-522" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> aq<span class="op">.</span><span class="fu">loadCSV</span>(<span class="st">"https://raw.githubusercontent.com/brunotancredi/lindeberg-feller/refs/heads/main/ols_montecarlo_simulation.csv"</span>)</span>
+<span id="cb2-523"><a href="#cb2-523" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-524"><a href="#cb2-524" aria-hidden="true" tabindex="-1"></a>viewof z <span class="op">=</span> Inputs<span class="op">.</span><span class="fu">range</span>(</span>
+<span id="cb2-525"><a href="#cb2-525" aria-hidden="true" tabindex="-1"></a>  [<span class="dv">2</span><span class="op">,</span> <span class="dv">500</span>]<span class="op">,</span> </span>
+<span id="cb2-526"><a href="#cb2-526" aria-hidden="true" tabindex="-1"></a>  {<span class="dt">value</span><span class="op">:</span> <span class="dv">2</span><span class="op">,</span> <span class="dt">step</span><span class="op">:</span> <span class="dv">1</span><span class="op">,</span> <span class="dt">label</span><span class="op">:</span> <span class="st">"Sample Size:"</span>}</span>
+<span id="cb2-527"><a href="#cb2-527" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-528"><a href="#cb2-528" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-529"><a href="#cb2-529" aria-hidden="true" tabindex="-1"></a>ols_data <span class="op">=</span> data<span class="op">.</span><span class="fu">filter</span>(aq<span class="op">.</span><span class="fu">escape</span>(d <span class="kw">=&gt;</span> d<span class="op">.</span><span class="at">n</span> <span class="op">===</span> z))</span>
+<span id="cb2-530"><a href="#cb2-530" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-531"><a href="#cb2-531" aria-hidden="true" tabindex="-1"></a>binThresholds <span class="op">=</span> {</span>
+<span id="cb2-532"><a href="#cb2-532" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> nbins <span class="op">=</span> <span class="dv">30</span><span class="op">;</span> <span class="co">// &lt;- your desired number of bins</span></span>
+<span id="cb2-533"><a href="#cb2-533" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> [xmin<span class="op">,</span> xmax] <span class="op">=</span> d3<span class="op">.</span><span class="fu">extent</span>(ols_data<span class="op">,</span> d <span class="kw">=&gt;</span> d<span class="op">.</span><span class="at">ols_estimator</span>)<span class="op">;</span></span>
+<span id="cb2-534"><a href="#cb2-534" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> step <span class="op">=</span> (xmax <span class="op">-</span> xmin) <span class="op">/</span> nbins<span class="op">;</span></span>
+<span id="cb2-535"><a href="#cb2-535" aria-hidden="true" tabindex="-1"></a>  <span class="co">// nbins bins = nbins+1 edges</span></span>
+<span id="cb2-536"><a href="#cb2-536" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> d3<span class="op">.</span><span class="fu">range</span>(xmin<span class="op">,</span> xmax <span class="op">+</span> step <span class="op">*</span> <span class="fl">1.0001</span><span class="op">,</span> step)<span class="op">;</span></span>
+<span id="cb2-537"><a href="#cb2-537" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-538"><a href="#cb2-538" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-539"><a href="#cb2-539" aria-hidden="true" tabindex="-1"></a>length <span class="op">=</span> ols_data<span class="op">.</span><span class="fu">numRows</span>()</span>
+<span id="cb2-540"><a href="#cb2-540" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-541"><a href="#cb2-541" aria-hidden="true" tabindex="-1"></a>Plot<span class="op">.</span><span class="fu">plot</span>({</span>
+<span id="cb2-542"><a href="#cb2-542" aria-hidden="true" tabindex="-1"></a>  <span class="dt">width</span><span class="op">:</span> <span class="dv">1000</span><span class="op">,</span></span>
+<span id="cb2-543"><a href="#cb2-543" aria-hidden="true" tabindex="-1"></a>  <span class="dt">height</span><span class="op">:</span> <span class="dv">500</span><span class="op">,</span></span>
+<span id="cb2-544"><a href="#cb2-544" aria-hidden="true" tabindex="-1"></a>  <span class="dt">y</span><span class="op">:</span> {<span class="dt">grid</span><span class="op">:</span> <span class="kw">true</span>}<span class="op">,</span></span>
+<span id="cb2-545"><a href="#cb2-545" aria-hidden="true" tabindex="-1"></a>  <span class="dt">x</span><span class="op">:</span> {<span class="dt">round</span><span class="op">:</span> <span class="kw">true</span>}<span class="op">,</span></span>
+<span id="cb2-546"><a href="#cb2-546" aria-hidden="true" tabindex="-1"></a>  <span class="dt">marks</span><span class="op">:</span> [</span>
+<span id="cb2-547"><a href="#cb2-547" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">rectY</span>(</span>
+<span id="cb2-548"><a href="#cb2-548" aria-hidden="true" tabindex="-1"></a>      ols_data<span class="op">,</span></span>
+<span id="cb2-549"><a href="#cb2-549" aria-hidden="true" tabindex="-1"></a>      Plot<span class="op">.</span><span class="fu">binX</span>(</span>
+<span id="cb2-550"><a href="#cb2-550" aria-hidden="true" tabindex="-1"></a>        { <span class="dt">y</span><span class="op">:</span> <span class="st">"proportion"</span> }<span class="op">,</span></span>
+<span id="cb2-551"><a href="#cb2-551" aria-hidden="true" tabindex="-1"></a>        {</span>
+<span id="cb2-552"><a href="#cb2-552" aria-hidden="true" tabindex="-1"></a>          <span class="dt">x</span><span class="op">:</span> <span class="st">"ols_estimator"</span><span class="op">,</span></span>
+<span id="cb2-553"><a href="#cb2-553" aria-hidden="true" tabindex="-1"></a>          <span class="dt">thresholds</span><span class="op">:</span> binThresholds<span class="op">,</span>   <span class="co">// fixed # of bins</span></span>
+<span id="cb2-554"><a href="#cb2-554" aria-hidden="true" tabindex="-1"></a>          <span class="dt">inset</span><span class="op">:</span> <span class="dv">0</span></span>
+<span id="cb2-555"><a href="#cb2-555" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb2-556"><a href="#cb2-556" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb2-557"><a href="#cb2-557" aria-hidden="true" tabindex="-1"></a>    )<span class="op">,</span></span>
+<span id="cb2-558"><a href="#cb2-558" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">ruleY</span>([<span class="dv">0</span>])</span>
+<span id="cb2-559"><a href="#cb2-559" aria-hidden="true" tabindex="-1"></a>  ]</span>
+<span id="cb2-560"><a href="#cb2-560" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div>
 <div id="ojs-cell-2-1" data-nodetype="declaration">

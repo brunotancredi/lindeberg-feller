@@ -27,16 +27,40 @@ csl: https://www.zotero.org/styles/apa
   gap:12px;
   flex-wrap:nowrap;
 ">
-  <img src="Lindeberg.jpg"
-       style="width:200px;height:300px;object-fit:cover;border-radius:4px;">
-  <img src="levy.jpg"
-       style="width:200px;height:300px;object-fit:cover;border-radius:4px;">
-  <img src="Feller.jpeg"
-       style="width:200px;height:300px;object-fit:cover;border-radius:4px;">
+  <figure style="margin:0; text-align:center;">
+    <img src="Lindeberg.jpg"
+         style="width:200px;height:300px;object-fit:cover;border-radius:4px;">
+    <figcaption style="margin-top:4px; font-size:14px;">
+      Jarl Waldemar Lindeberg
+    </figcaption>
+  </figure>
+
+  <figure style="margin:0; text-align:center;">
+    <img src="levy.jpg"
+         style="width:200px;height:300px;object-fit:cover;border-radius:4px;">
+    <figcaption style="margin-top:4px; font-size:14px;">
+      Paul Lévy<br>
+      <span style="font-size:8px;">
+        Photo: Konrad Jacobs, Erlangen, 
+        <a href="https://creativecommons.org/licenses/by-sa/2.0/de/deed.en"
+           target="_blank" rel="noopener noreferrer">
+          CC BY-SA 2.0 DE 
+        </a> </br>via Wikimedia Commons
+      </span>
+    </figcaption>
+  </figure>
+
+  <figure style="margin:0; text-align:center;">
+    <img src="Feller.jpeg"
+         style="width:200px;height:300px;object-fit:cover;border-radius:4px;">
+    <figcaption style="margin-top:4px; font-size:14px;">
+      William Feller
+    </figcaption>
+  </figure>
 </div>
 
 
-I’m going to present generalizations of the Central Limit Theorem, such as the Lindeberg–Levy–Feller Central Limit Theorem and Lyapunov’s Central Limit Theorem. 
+I’m going to present generalizations of the Central Limit Theorem, such as the Lindeberg–Lévy–Feller Central Limit Theorem and Lyapunov’s Central Limit Theorem. 
 
 The applications of the asymptotic behavior of the sample mean of random variables extend across all areas of statistics, being used for inference, hypothesis testing, estimation theory, among many others.
 
@@ -65,7 +89,7 @@ $$
 \sqrt{n}\frac{\bar{X}_n - \mu}{\sigma} \, \overset{d}{\rightarrow} \, \mathcal{N}(0,1), \quad \text{as} \quad n \rightarrow \infty
 $$
 
-But is easy to see that is equivalent at the one stated above
+But is easy to see that is equivalent to the one stated above
 
 $$
 \sqrt{n}\frac{\bar{X}_n - \mu}{\sigma}
@@ -130,7 +154,7 @@ Plot.plot({
 
 The issue with the theorem is that it relies on two strong assumptions: **independence** and **identical distribution**. But what if I told you we could relax one of them?
 
-## Lindeberg-Lévy-Feller
+## Lindeberg-Lévy-Feller Theorem
 
 Let $\{X_n\}_{n \geq 1}$ be a sequence of **independent** random variables with finite variances, and set, for $k \geq 1, \mathbb{E}[X_k]= \mu_k, Var[X_k] = \sigma_k^2$ and for $n \geq 1, S_n = \sum^{n}_{k=1}X_k$ and $V_n^2 = \sum^n_{k=1}\sigma_k^2$
 
@@ -140,17 +164,27 @@ $$
 L_1(n) = \frac{1}{V_n^2}\sum^{n}_{k=1}\mathbb{E}\big[(X_k - \mu_k)^2\mathbf{1}_{\{|X_k - \mu_k| \gt \epsilon V_n\}}\big] \underset{n \rightarrow \infty}{\rightarrow} 0, \quad \forall \epsilon \gt 0
 $$ {#eq-Lind1}
 
-$$
-L_2(n) = \max_{1 \leq k \leq n} \frac{\sigma^2_k}{V_n} \underset{n \rightarrow \infty}{\rightarrow} 0,
-$$ {#eq-Lind2}
-
-### Interpretating the conditions
-
 $L_1$ (Lindeberg's Condition): This condition requires that the proportion of variance represented by values far from the mean is negligible. In other words, what it asks us is that the original distributions of $X_k$ do not have heavy tails.
 
 ![Rudimentary visualization of Lindeberg Condition](sketch.png){#fig-sketch}
 
-$L_2$: To understand condition $L_2$, it is useful to consider when it fails. The condition is violated when $\sigma_k^2$ represents a non-negligible portion of the total sum of variances. In other words, this occurs when the variance of a single term contributes significantly to the total variance. For example, this could happen when $\sigma^2_k = \sum_{i=1}^{k-1} \sigma_i^2$. So we are asking o each $X_k$ to have a limited variance.
+$$
+L_2(n) = \max_{1 \leq k \leq n} \frac{\sigma^2_k}{V_n^2} \underset{n \rightarrow \infty}{\rightarrow} 0,
+$$ {#eq-Lind2}
+
+
+$L_2$: To understand condition $L_2$, it is helpful to consider situations in which it fails. 
+The condition is violated when a single variance $\sigma_k^2$ constitutes a non-negligible fraction of the total variance $V_n^2$. 
+For example, this can occur if
+
+$$
+\sigma_k^2 = \sum_{i=1}^{k-1} \sigma_i^2,
+$$
+
+since in that case the $k$th term alone contributes half of the total variance.
+
+Thus, condition $L_2$ requires that no individual $X_k$ have variance that is large relative to the total variance; each term's contribution must become negligible as $n$ grows.
+
 
 ### Theorem
 
@@ -167,14 +201,15 @@ $$
 \frac{1}{V_n}\sum^{n}_{k=1}(X_k - \mu_k) \overset{d}{\rightarrow} \mathcal{N}(0, 1), \quad \text{as} \quad n \rightarrow \infty
 $$ {#eq-LindCLT}
 
-(ii). If @eq-Lind2 and @eq-LindCLT are satisfied, then so is @eq-Lind1
+(ii). If $L_2$ (@eq-Lind2) and the convergence in distribution to a standard normal (@eq-LindCLT) both hold, then $L_1$ @eq-Lind1 holds as well.
+
 :::
 
-As we can see, we no longer require that the sequence be **identically distributed** to obtain a normal distribution. We are only requiring (i) that $L_1$ is satisfied.
+As we can see, we no longer require that the sequence be **identically distributed** to obtain a normal distribution. We are only requiring that $L_1$ is satisfied (i).
 
 ## What do we need to prove it?
 
-The proof of the theorem is extensive, so here I’m going to present a sketch of the proof.
+The proof of the theorem is extensive, so here I’m going to present only a sketch of the proof.
 
 First, for simplicity and without loss of generality, we assume that $\mu_k = 0$ for all $k \geq 1$.\
 So we want to prove that 
@@ -259,7 +294,7 @@ This combination of **Lévy’s Continuity Theorem** and **Taylor series expansi
 ## Example
 
 A cool application of Lindeberg-Feller theorem is in the area of Linear Regression. For those that are in a Regression course, or already take one, you will have seen that the Ordinary Least Squares (OLS) estimator follows a normal distribution when the errors are normal. But ... ***what if the errors are not normal?*** 
-Well, under certain assumptions we can use the Lindeberg-Lévy-Feller theorem to show that the OLS estimator assympotically follows a normal distribution. For simplicity we are going to prove it for the estimator of the slope coefficient in a simple linear regression model (SLR).
+Well, under certain assumptions we can use the Lindeberg-Lévy-Feller theorem to show that the OLS estimator asymptotically follows a normal distribution. For simplicity we are going to prove it for the estimator of the slope coefficient in a simple linear regression model (SLR).
 
 $$
 y_i = \beta_0 + \beta_1x_i + e_i, \quad e_i \quad i.i.d \quad \forall i = 1, \dots, n
@@ -293,17 +328,17 @@ $$
 
 We have that the expected value of $W_{ni}$ is zero and its variance is given by $\sigma^2(x_i - \bar{X})^2$, since the only random part is $e_i$ and they are i.i.d, with mean zero and variance $\sigma^2$. 
 
-Our goal is to proof that
+Our goal is to prove that
 $$
 \frac{\sum_{i=1}^{n}W_{ni}}{\sigma\sqrt(\sum_{i=1}^{n}(x_i - \bar{X}_n)^2)} \overset{d}{\rightarrow} \mathcal{N}(0,1), \quad \text{as} \quad n \rightarrow \infty
 $${#eq-ols-convergence}
 
-Note that proving these we are proving $\hat{\beta}_{1n} \overset{d}{\rightarrow} \mathcal{N}(\beta_1, \frac{\sigma^2}{\sum_{i=1}^n(x_i - \bar{X_n})^2})$ since
+Note that proving these we are proving $\hat{\beta}_{1n} \overset{d}{\rightarrow} \mathcal{N}(\beta_1, \frac{\sigma^2}{\sum_{i=1}^n(x_i - \bar{X}_n)^2})$ since
 
 \begin{align*}
 \hat{\beta}_{1n} &= \beta_1 + \frac{\sum_{i=1}^nW_{ni}}{\sum_{i=1}^n(x_i - \bar{X}_n)^2} \\
 &= \beta_1 + \frac{\sigma}{\sqrt{\sum_{i=1}^n(x_i - \bar{X}_n)^2}} \cdot \frac{\sum_{i=1}^{n}W_{ni}}{\sigma\sqrt(\sum_{i=1}^{n}(x_i - \bar{X})^2)}\\
-&\overset{d}{\rightarrow} \beta_1 + \frac{\sigma}{\sqrt{\sum_{i=1}^n(x_i - \bar{X}_n)^2}} \cdot Z = \mathcal{N}\left(\beta_1, \frac{\sigma^2}{\sum_{i=1}^n(x_i - \bar{X_n})^2}\right)
+&\overset{d}{\rightarrow} \beta_1 + \frac{\sigma}{\sqrt{\sum_{i=1}^n(x_i - \bar{X}_n)^2}} \cdot Z = \mathcal{N}\left(\beta_1, \frac{\sigma^2}{\sum_{i=1}^n(x_i - \bar{X}_n)^2}\right)
 \end{align*}
 
 Thanks to Lindeberg-Lévy-Feller theorem @thm-llf, we only need to prove that $L_1$ (@eq-Lind1) holds for the sequence $\{W_{ni}\}_{i=1}^{n}$ to conclude that @eq-ols-convergence holds. 
@@ -314,14 +349,14 @@ Thanks to Lindeberg-Lévy-Feller theorem @thm-llf, we only need to prove that $L
 The Lindeberg condition is given by
 
 $$
-\frac{1}{V_n}\sum_{i=1}^n 
+\frac{1}{V_n^2}\sum_{i=1}^n 
 \mathbb{E}\!\left[ W_{ni}^2 \mathbf{1}\{ |W_{ni}| > \varepsilon V_n \} \right].
 $$
 
 Replacing by the definition of $W_{ni}$,
 
 $$
-\frac{1}{V_n} \sum_{i=1}^n 
+\frac{1}{V_n^2} \sum_{i=1}^n 
 \mathbb{E}\!\left[ ((x_i - \bar X_n)e_i)^2 
      \mathbf{1}\{ |(x_i - \bar X_n)e_i| \ge \varepsilon V_n \} \right].
 $$
@@ -329,7 +364,7 @@ $$
 This can be written as
 
 $$
-\frac{1}{V_n} \sum_{i=1}^n (x_i - \bar X_n)^2 
+\frac{1}{V_n^2} \sum_{i=1}^n (x_i - \bar X_n)^2 
      \mathbb{E}\!\left[ e_i^2 \mathbf{1}\left\{ |e_i| \ge 
      \frac{\varepsilon V_n}{|x_i - \bar X_n|} \right\} \right].
 $$
@@ -362,7 +397,7 @@ $$
 Using the previous bound,
 
 $$
-\le \frac{1}{V_n} \sum_{i=1}^n (x_i - \bar X_n)^2 
+\le \frac{1}{V_n^2} \sum_{i=1}^n (x_i - \bar X_n)^2 
 \mathbb{E}\!\left[
 e_i^2 \mathbf{1}\!\left\{ |e_i| \ge \frac{\varepsilon V_n}{M} \right\}
 \right].
@@ -371,19 +406,19 @@ $$
 Since the $e_i$ are independent and identically distributed,
 
 $$
-= \frac{1}{V_n} \left[ \sum_{i=1}^n (x_i - \bar X_n)^2 \right]
+= \frac{1}{V_n^2} \left[ \sum_{i=1}^n (x_i - \bar X_n)^2 \right]
 \mathbb{E}\!\left[
 e_1^2 \mathbf{1}\!\left\{ |e_1| \ge \frac{\varepsilon V_n}{M} \right\}
 \right].
 $$
 
-Using the definition of $V_n = \sigma^2 \sum_{i=1}^n (x_i - \bar X_n)^2$,
+Using the definition of $V_n^2  = \sigma^2 \sum_{i=1}^n (x_i - \bar X_n)^2$,
 
 $$
 = \frac{1}{\sigma^2} 
 \mathbb{E}\!\left[
 e_1^2 \mathbf{1}\!\left\{ |e_1| \ge 
-\varepsilon \frac{\sqrt{\sum (x_i - \bar X_n)^2}}{M}
+\varepsilon \sigma \frac{\sqrt{\sum (x_i - \bar X_n)^2}}{M}
 \right\} \right].
 $$
 
@@ -393,7 +428,7 @@ $$
 = \frac{1}{\sigma^2}
 \mathbb{E}\!\left[
 e_1^2 \mathbf{1}\!\left\{ |e_1| \ge 
-\varepsilon \sqrt{\frac{\sum (x_i - \bar X_n)^2}{M^2}}
+\varepsilon \sigma  \sqrt{\frac{\sum (x_i - \bar X_n)^2}{M^2}}
 \right\}
 \right].
 $$
@@ -413,7 +448,7 @@ then
 $$
 e_1^2 \mathbf{1}\!\left\{
 |e_1| \ge 
-\varepsilon \sqrt{\frac{\sum (x_i - \bar X_n)^2}{M^2}}
+\varepsilon \sigma  \sqrt{\frac{\sum (x_i - \bar X_n)^2}{M^2}}
 \right\}
 \longrightarrow 0
 \quad \text{a.s.}
@@ -434,7 +469,7 @@ Applying this to our setting, we have
 $$
 e_1^2\,\mathbf{1}\!\left\{
 |e_1| \ge 
-\varepsilon \sqrt{\frac{\sum (x_i - \bar X_n)^2}{M^2}}
+\varepsilon \sigma  \sqrt{\frac{\sum (x_i - \bar X_n)^2}{M^2}}
 \right\}
 \longrightarrow 0,
 $$
@@ -445,7 +480,7 @@ $$
 0 \le 
 e_1^2\,\mathbf{1}\!\left\{
 |e_1| \ge 
-\varepsilon \sqrt{\frac{\sum (x_i - \bar X_n)^2}{M^2}}
+\varepsilon \sigma  \sqrt{\frac{\sum (x_i - \bar X_n)^2}{M^2}}
 \right\}
 \le e_1^2.
 $$
@@ -456,7 +491,7 @@ $$
 \mathbb{E}\!\left[
 e_1^2\,\mathbf{1}\!\left\{
 |e_1| \ge 
-\varepsilon \sqrt{\frac{\sum (x_i - \bar X_n)^2}{M^2}}
+\varepsilon \sigma \sqrt{\frac{\sum (x_i - \bar X_n)^2}{M^2}}
 \right\}
 \right]
 \longrightarrow 0 \qquad (n \to \infty).
@@ -464,7 +499,7 @@ $$
 
 :::
 
-In @nte-proof, we conclude that we can change the identical distribution requirement for 
+In @nte-proof, we conclude that we can change the normal distribution requirement for 
 
 $$
 \max_{1 \leq j \leq n} \frac{(x_j - \bar{X}_n)^2}{\sum_{i=1}^{n}(x_i - \bar{X}_n)^2} \underset{n \rightarrow \infty}{\rightarrow} 0
@@ -545,7 +580,9 @@ It's worth noticing that if, $L_1$ holds doesn't implies that $L_y$ holds too.
 
 ## Comments: When it fails?
 
-The advantage of the Lindeberg–Lévy–Feller theorem is that it relaxes the strong assumption of identical distribution required in the classical Central Limit Theorem, replacing it with the more general Lindeberg condition. It is important to note that independence among random variables is still required. Moreover, as discussed earlier, the Lindeberg condition essentially limits the presence of heavy-tailed distributions. However, as shown by [@Newman2004], we can find heavy-tailed behavior everywhere. In his article, Newman lists several examples, including city populations, individual wealth, citations of scientific papers, website traffic, and others.
+Sometimes, when working with a model whose assumptions require normality, we reassure ourselves with the argument: “I have enough data—the Central Limit Theorem guarantees that the distribution is approximately normal.” However, this is **not always true**.
+
+The advantage of the Lindeberg–Lévy–Feller theorem is that it relaxes the strong assumption of identical distribution required in the classical Central Limit Theorem, replacing it with the more general Lindeberg condition. It is important to note that independence among random variables is still required. Moreover, as discussed earlier, the Lindeberg condition essentially **limits the presence of heavy-tailed distributions**. However, as shown by [@Newman2004], we can find heavy-tailed behavior everywhere. In his article, Newman lists several examples, including ***city populations***, ***individual wealth***, ***citations of scientific papers***, ***website traffic***, and others.
 
 As an illustration, consider the empirical example using the dataset [@ache2022citationnetwork], which contains 4,894,081 scientific papers and their corresponding citation counts.
 
@@ -555,11 +592,11 @@ So we have two possibilities: either I ran the experiment infinitely many times,
 
 ![Centered sampling distributions of the sample means. Observations exceeding 5 standard deviations are highlighted in green, while those exceeding 10 standard deviations are highlighted in red.](sampling_distribution_means.png){#fig-distribution-means}
 
-In @fig-lindeberg_convergence, we can see how $L_1$ is not satisficied, since instead of converging to 0 it bounces, even with $n=500,000$.
+In @fig-lindeberg_convergence, we can see that $L_1$ is not satisfied, since it converges extremely slowly to $0$ and does not reach it even at $n = 500{,}000$.
 
 ![Evolution of the empirical Lindeberg condition for an arbitrary ε = 0.2](lindeberg_convergence.gif){#fig-lindeberg_convergence}
 
-As a final comment, here we are working with citations in papers that have a certain limitation (the most cited papers here have around 50,000 citations). Now think about views of a webpage: how many views does [www.youtube.com](www.youtube.com) have compared to this humble page that talks about the Lindeberg–Lévy–Feller theorem? The variance there will be much higher, and this is just another example. So be careful, **a heavy-tailed distribution might be waiting for you around the corner**.
+As a final comment, here we are working with citations in papers that have a certain limitation (the most cited papers here have around 50,000 citations). Now think about views of a webpage: how many views does [www.youtube.com](www.youtube.com) have compared to this humble page that talks about the Lindeberg–Lévy–Feller theorem? The variance there will be much higher, and this is just another example. So be careful, when your model assumes normality,because **a heavy-tailed distribution might be waiting for you around the corner**.
 
 ## Comic Relief
 

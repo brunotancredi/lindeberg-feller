@@ -4,8 +4,4 @@ project:
 
 website:
   title: "Lindeberg-Lévy-Feller Theorem"
-  sidebar:
-    style: "floating"
-    contents:
-      - index.qmd
 

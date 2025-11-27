@@ -1,0 +1,13 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+
+/.quarto/
+/presentation_files/*
+
+.DS_Store
+uv.lock
+
+*.Rproj
+.python-version
